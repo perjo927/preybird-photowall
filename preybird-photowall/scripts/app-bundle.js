@@ -145,5 +145,5 @@ define('resources/elements/flickr-image',["require", "exports"], function (requi
 define('text!app.html', ['module'], function(module) { module.exports = "<template><require from=./styles/main.css></require><require from=./resources/elements/flickr-image.html></require><h1>${title}</h1><form submit.trigger=search()><input type=text value.bind=searchText><button type=Search>Search</button></form><ul><li repeat.for=\"image of images\"><flickr-image link.bind=image.link title.bind=image.title></flickr-image></li><li></li></ul></template>"; });
 define('text!styles/main.css', ['module'], function(module) { module.exports = "h1 {\n  color: green; }\n"; });
 define('text!resources/elements/image.html', ['module'], function(module) { module.exports = "<template bindable=\"link, title\">hello</template>"; });
-define('text!resources/elements/flickr-image.html', ['module'], function(module) { module.exports = "<template bindable=\"link, title\"><h4>${title}</h4><img src=${link} alt=${title}></template>"; });
+define('text!resources/elements/flickr-image.html', ['module'], function(module) { module.exports = "<template bindable=\"link, title\"><h4>${title}</h4><picture><img src=${link} alt=${title}></picture></template>"; });
 //# sourceMappingURL=app-bundle.js.map
