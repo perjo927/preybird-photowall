@@ -10,10 +10,11 @@
   </form>
 
   <ul>
+    <!-- TODO: render/append each element sequentially (css transitions) -->
+    <!-- TODO: Flexbox responsive design -->
     <li repeat.for="image of images">
       <flickr-image link.bind="image.link" title.bind="image.title">
       </flickr-image>
     <li>
   </ul>
-
 </template>

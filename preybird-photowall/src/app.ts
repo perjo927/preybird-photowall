@@ -36,29 +36,29 @@ export class App {
   }
 
 
-  search() {
+  async search() {
     if (this.searchText) {
+      this.images = [];
       // TODO: replace whitespace with comma
       // Tags
       let urlTags = this.searchText;
 
       // Fetch
-      // TODO: typescript await
-      this.http.fetch(urlTags)
-        .then(response => {
-          return response.json();
-        })
-        .then(data => {
-          let items = data.items;
-          console.log(items);
+      try {
+        let response = await this.http.fetch(urlTags);
+        let data = await response.json();
+
+        let items = data.items;
 
           // TODO: 
           // Process data
           for (let i of items) {
             this.images.push(new FlickrImage(i.media.m, i.title))
           }
-        })
-        .catch(error => console.log(error));
+      }
+      catch (err) {
+        console.log(err);
+      }      
 
       // Reset
       this.searchText = '';
