@@ -1,0 +1,25 @@
+$small-size: 600px;
+
+.flex {
+    display: flex;
+    flex-direction: row;
+    flex-flow: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+
+    & .col {
+        width: 32%;
+        padding: 20px;
+    }
+}
+
+@media (max-width: $small-size) {
+    .flex {
+        display: block;
+
+        .col {
+            width: 100%;
+            margin: 0 0 10px 0;
+        }
+    }
+}

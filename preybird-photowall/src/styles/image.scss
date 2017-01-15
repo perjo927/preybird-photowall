@@ -1,4 +1,14 @@
+@import './keyframes';
 
-* {
+picture {
+    animation: fadein ease-in 1s;
+}
 
+img {
+    border: 5px solid black;
+    border-radius: 5px;
+}
+
+h5 {
+    margin-top: 0;
 }

@@ -1,11 +1,56 @@
 @import './fonts';
+@import './grid';
+@import './keyframes';
+
+// TODO: Autoprefix
+
+* {
+  box-sizing: border-box;
+}
 
 body {
+  padding: 20px;
+}
+
+body, input {
     font-family: $secondary-font-family;
     color: $primary-font-color;     
 }
 
 h1 {
+    animation: shake 1s;
+
     font-family: $primary-font-family;
     color: $heading-font-color; 
+    text-align: center;
+}
+
+form.search {    
+    text-align: center;
+
+    .form {
+    }
+        
+    input, button {
+        border-radius: 3px;
+    }    
+
+    input {        
+        width: 150px;
+        border: 2px solid lightgray;
+    }
+
+    button {
+        margin-left: 5px;        
+        border: 2px solid darkgray;
+
+        font-family: $secondary-font-family;
+        font-weight: bold;
+
+        width: 70px;
+
+        animation: shake 1s;
+        animation-delay: 1s;
+
+    }
 }
