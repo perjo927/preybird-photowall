@@ -1,0 +1,19 @@
+<template>
+  <require from="./styles/main.css"></require>
+  <require from="./resources/elements/flickr-image.html"></require>  
+
+  <h1>${title}</h1>
+
+  <form submit.trigger="search()">
+    <input type="text" value.bind="searchText">
+    <button type="Search">Search</button>
+  </form>
+
+  <ul>
+    <li repeat.for="image of images">
+      <flickr-image link.bind="image.link" title.bind="image.title">
+      </flickr-image>
+    <li>
+  </ul>
+
+</template>
