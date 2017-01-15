@@ -1,0 +1,6 @@
+node_modules
+.idea
+.DS_STORE
+npm-debug.log
+preybird-photowall/scripts
+preybird-photowall/yarn-error.log
