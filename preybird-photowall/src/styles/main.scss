@@ -1,3 +1,11 @@
+@import './fonts';
+
+body {
+    font-family: $secondary-font-family;
+    color: $primary-font-color;     
+}
+
 h1 {
-    color: green; 
+    font-family: $primary-font-family;
+    color: $heading-font-color; 
 }

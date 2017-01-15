@@ -4,7 +4,7 @@ define('resources/elements/flickr-image',["require", "exports"], function (requi
         function FlickrImage(link, title) {
             this.link = link;
             this.title = title;
-            console.log(link, title);
+            this.linkBig = link;
         }
         return FlickrImage;
     }());
@@ -87,7 +87,7 @@ define('app',["require", "exports", "./resources/elements/flickr-image", "aureli
         }
         App.prototype.search = function () {
             return __awaiter(this, void 0, void 0, function () {
-                var urlTags, response, data, items, _i, items_1, i, err_1;
+                var urlTags, fetchOptions, response, data, items, _i, items_1, i, err_1;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
@@ -97,7 +97,10 @@ define('app',["require", "exports", "./resources/elements/flickr-image", "aureli
                             _a.label = 1;
                         case 1:
                             _a.trys.push([1, 4, , 5]);
-                            return [4 /*yield*/, this.http.fetch(urlTags)];
+                            fetchOptions = { method: 'GET',
+                                mode: 'cors',
+                                cache: 'default' };
+                            return [4 /*yield*/, this.http.fetch(urlTags, fetchOptions)];
                         case 2:
                             response = _a.sent();
                             return [4 /*yield*/, response.json()];
@@ -168,7 +171,12 @@ define('resources/index',["require", "exports"], function (require, exports) {
     exports.configure = configure;
 });
 
-define('text!app.html', ['module'], function(module) { module.exports = "<template><require from=./styles/main.css></require><require from=./resources/elements/flickr-image.html></require><h1>${title}</h1><form submit.trigger=search()><input type=text value.bind=searchText><button type=Search>Search</button></form><ul><li repeat.for=\"image of images\"><flickr-image link.bind=image.link title.bind=image.title></flickr-image></li><li></li></ul></template>"; });
-define('text!resources/elements/flickr-image.html', ['module'], function(module) { module.exports = "<template bindable=\"link, title\"><h4>${title}</h4><picture><img src=${link} alt=${title}></picture></template>"; });
-define('text!styles/main.css', ['module'], function(module) { module.exports = "h1 {\n  color: green; }\n"; });
+define('resources/elements/image.interface',["require", "exports"], function (require, exports) {
+    "use strict";
+});
+
+define('text!app.html', ['module'], function(module) { module.exports = "<template><require from=./styles/main.css></require><require from=./resources/elements/flickr-image.html></require><h1>${title}</h1><form submit.trigger=search()><input type=text value.bind=searchText><button type=Search>Search</button></form><ul><li repeat.for=\"image of images\"><flickr-image link.bind=image.link linkbig.bind=image.linkBig title.bind=image.title></flickr-image></li><li></li></ul></template>"; });
+define('text!resources/elements/flickr-image.html', ['module'], function(module) { module.exports = "<template bindable=\"link, linkBig, title\"><h4>${title}</h4><picture><source srcset=${linkBig} media=\"(min-width: 600px)\"><img src=${link} alt=${title}></picture></template>"; });
+define('text!styles/main.css', ['module'], function(module) { module.exports = "@import url(\"https://fonts.googleapis.com/css?family=Open+Sans|Pacifico\");\nbody {\n  font-family: \"Open Sans\", sans-serif;\n  color: darkgray; }\n\nh1 {\n  font-family: \"Pacifico\", cursive;\n  color: mediumvioletred; }\n"; });
+define('text!styles/image.css', ['module'], function(module) { module.exports = ""; });
 //# sourceMappingURL=app-bundle.js.map

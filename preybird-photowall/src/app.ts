@@ -11,6 +11,7 @@ export class App {
 
   constructor(private http: HttpClient) {
 
+    // TODO: cors
     // TODO: fetch from httpclientconfig.json
     http.configure(config => {
       config
@@ -45,13 +46,17 @@ export class App {
 
       // Fetch
       try {
-        let response = await this.http.fetch(urlTags);
+        var fetchOptions = { method: 'GET',               
+               mode: 'cors',
+               cache: 'default' };
+
+        let response = await this.http.fetch(urlTags, fetchOptions); 
         let data = await response.json();
 
         let items = data.items;
 
           // TODO: 
-          // Process data
+          // Process data, use base handler
           for (let i of items) {
             this.images.push(new FlickrImage(i.media.m, i.title))
           }
