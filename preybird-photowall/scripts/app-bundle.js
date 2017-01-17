@@ -1,3 +1,52 @@
+define('resources/configuration/clientConfig.interface',["require", "exports"], function (require, exports) {
+    "use strict";
+});
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+define('resources/configuration/httpClientConfig',["require", "exports", "aurelia-http-client", "aurelia-framework"], function (require, exports, aurelia_http_client_1, aurelia_framework_1) {
+    "use strict";
+    var HttpClientConfig = (function () {
+        function HttpClientConfig(httpClient) {
+            this.httpClient = new aurelia_http_client_1.HttpClient();
+        }
+        HttpClientConfig.prototype.get = function (options) {
+            this.httpClient.configure(function (config) {
+                config
+                    .withBaseUrl(options.baseUrl)
+                    .withInterceptor({
+                    request: function (request) {
+                        console.log("Requesting " + request.baseUrl + " " + request.url);
+                        return request;
+                    },
+                    response: function (response) {
+                        console.log("Received " + response.statusCode + " " + response.statusText);
+                        return response;
+                    }
+                });
+            });
+            return this.httpClient;
+        };
+        return HttpClientConfig;
+    }());
+    HttpClientConfig = __decorate([
+        aurelia_framework_1.autoinject,
+        __metadata("design:paramtypes", [aurelia_http_client_1.HttpClient])
+    ], HttpClientConfig);
+    exports.HttpClientConfig = HttpClientConfig;
+});
+
+define('resources/elements/image.interface',["require", "exports"], function (require, exports) {
+    "use strict";
+});
+
 define('resources/elements/flickr-image',["require", "exports"], function (require, exports) {
     "use strict";
     var FlickrImage = (function () {
@@ -9,6 +58,34 @@ define('resources/elements/flickr-image',["require", "exports"], function (requi
         return FlickrImage;
     }());
     exports.FlickrImage = FlickrImage;
+});
+
+define('resources/configuration/flickrApi.interface',["require", "exports"], function (require, exports) {
+    "use strict";
+});
+
+define('resources/configuration/flickrApiConfig',["require", "exports"], function (require, exports) {
+    "use strict";
+    var FlickrApiPublicConfig = (function () {
+        function FlickrApiPublicConfig() {
+            this.baseUrl = "https://api.flickr.com/services/feeds/photos_public.gne/?format=json&nojsoncallback=0&tags=";
+        }
+        FlickrApiPublicConfig.prototype.get = function () {
+            return this.baseUrl;
+        };
+        return FlickrApiPublicConfig;
+    }());
+    exports.FlickrApiPublicConfig = FlickrApiPublicConfig;
+    var FlickrApiAppKeyConfig = (function () {
+        function FlickrApiAppKeyConfig() {
+            this.baseUrl = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=ad1eaebc00afa46613c77ea08f77870d&format=json&nojsoncallback=1&tags=";
+        }
+        FlickrApiAppKeyConfig.prototype.get = function () {
+            return this.baseUrl;
+        };
+        return FlickrApiAppKeyConfig;
+    }());
+    exports.FlickrApiAppKeyConfig = FlickrApiAppKeyConfig;
 });
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -55,71 +132,61 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define('app',["require", "exports", "./resources/elements/flickr-image", "aurelia-framework", "aurelia-fetch-client"], function (require, exports, flickr_image_1, aurelia_framework_1, aurelia_fetch_client_1) {
+define('app',["require", "exports", "./resources/configuration/httpClientConfig", "aurelia-framework", "./resources/configuration/flickrApiConfig"], function (require, exports, httpClientConfig_1, aurelia_framework_1, flickrApiConfig_1) {
     "use strict";
+    window.jsonFlickrFeed = function jsonFlickrFeed(rsp) {
+        console.log(rsp);
+        if (rsp.stat != "ok") {
+            return;
+        }
+        console.log(rsp);
+    };
     var App = (function () {
-        function App(http) {
-            this.http = http;
+        function App(httpClientConfig, flickrApiConfig) {
+            this.httpClientConfig = httpClientConfig;
             this.images = [];
             this.searchText = '';
             this.title = 'My Photo Wall';
-            http.configure(function (config) {
-                config
-                    .withBaseUrl("https://api.flickr.com/services/feeds/photos_public.gne/?format=json&nojsoncallback=1&tags=")
-                    .withDefaults({
-                    credentials: 'same-origin',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'Fetch',
-                    }
-                })
-                    .withInterceptor({
-                    request: function (request) {
-                        console.log("Requesting " + request.method + " " + request.url);
-                        return request;
-                    },
-                    response: function (response) {
-                        console.log("Received " + response.status + " " + response.url);
-                        return response;
-                    }
-                });
+            var http = httpClientConfig.get({
+                baseUrl: flickrApiConfig.get()
             });
         }
+        App.prototype.apiKeySearch = function () {
+            return __awaiter(this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    return [2 /*return*/];
+                });
+            });
+        };
         App.prototype.search = function () {
             return __awaiter(this, void 0, void 0, function () {
-                var urlTags, fetchOptions, response, data, items, _i, items_1, i, err_1;
+                var urlTags, fetchOptions, response, err_1;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            if (!this.searchText) return [3 /*break*/, 6];
+                            if (!this.searchText) return [3 /*break*/, 5];
                             this.images = [];
                             urlTags = this.searchText;
                             _a.label = 1;
                         case 1:
-                            _a.trys.push([1, 4, , 5]);
-                            fetchOptions = { method: 'GET',
+                            _a.trys.push([1, 3, , 4]);
+                            fetchOptions = {
+                                method: 'GET',
                                 mode: 'cors',
-                                cache: 'default' };
-                            return [4 /*yield*/, this.http.fetch(urlTags, fetchOptions)];
+                                cache: 'default'
+                            };
+                            return [4 /*yield*/, this.http.jsonp(urlTags, 'jsonp')];
                         case 2:
                             response = _a.sent();
-                            return [4 /*yield*/, response.json()];
+                            return [3 /*break*/, 4];
                         case 3:
-                            data = _a.sent();
-                            items = data.items;
-                            for (_i = 0, items_1 = items; _i < items_1.length; _i++) {
-                                i = items_1[_i];
-                                this.images.push(new flickr_image_1.FlickrImage(i.media.m, i.title));
-                            }
-                            return [3 /*break*/, 5];
-                        case 4:
                             err_1 = _a.sent();
                             console.log(err_1);
-                            return [3 /*break*/, 5];
-                        case 5:
+                            return [3 /*break*/, 4];
+                        case 4:
                             this.searchText = '';
-                            _a.label = 6;
-                        case 6: return [2 /*return*/];
+                            _a.label = 5;
+                        case 5: return [2 /*return*/];
                     }
                 });
             });
@@ -128,7 +195,7 @@ define('app',["require", "exports", "./resources/elements/flickr-image", "aureli
     }());
     App = __decorate([
         aurelia_framework_1.autoinject,
-        __metadata("design:paramtypes", [aurelia_fetch_client_1.HttpClient])
+        __metadata("design:paramtypes", [httpClientConfig_1.HttpClientConfig, flickrApiConfig_1.FlickrApiPublicConfig])
     ], App);
     exports.App = App;
 });
@@ -171,12 +238,55 @@ define('resources/index',["require", "exports"], function (require, exports) {
     exports.configure = configure;
 });
 
-define('resources/elements/image.interface',["require", "exports"], function (require, exports) {
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+define('resources/configuration/fetchClientConfig',["require", "exports", "aurelia-fetch-client", "aurelia-framework"], function (require, exports, aurelia_fetch_client_1, aurelia_framework_1) {
     "use strict";
+    var HttpClientConfig = (function () {
+        function HttpClientConfig(httpClient) {
+        }
+        HttpClientConfig.prototype.get = function (options) {
+            this.httpClient.configure(function (config) {
+                config
+                    .withBaseUrl(options.baseUrl)
+                    .withDefaults({
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'Fetch',
+                    }
+                })
+                    .withInterceptor({
+                    request: function (request) {
+                        console.log("Requesting " + request.method + " " + request.url);
+                        return request;
+                    },
+                    response: function (response) {
+                        console.log("Received " + response.status + " " + response.url);
+                        return response;
+                    }
+                });
+            });
+            return this.httpClient;
+        };
+        return HttpClientConfig;
+    }());
+    HttpClientConfig = __decorate([
+        aurelia_framework_1.autoinject,
+        __metadata("design:paramtypes", [aurelia_fetch_client_1.HttpClient])
+    ], HttpClientConfig);
+    exports.HttpClientConfig = HttpClientConfig;
 });
 
 define('text!app.html', ['module'], function(module) { module.exports = "<template><require from=./styles/main.css></require><require from=./resources/elements/flickr-image.html></require><h1>${title}</h1><form submit.trigger=search() class=search><span class=form><input type=text value.bind=searchText><button type=Search>Search</button></span></form><div class=flex><div class=col repeat.for=\"image of images\"><flickr-image link.bind=image.link linkbig.bind=image.linkBig title.bind=image.title></flickr-image></div></div></template>"; });
 define('text!resources/elements/flickr-image.html', ['module'], function(module) { module.exports = "<template bindable=\"link, linkBig, title\"><require from=../../styles/image.css></require><picture><source srcset=${linkBig} media=\"(min-width: 600px)\"><img src=${link} alt=${title}></picture><h5>${title}</h5></template>"; });
-define('text!styles/main.css', ['module'], function(module) { module.exports = "@import url(\"https://fonts.googleapis.com/css?family=Open+Sans|Pacifico\");\n.flex {\n  display: flex;\n  flex-direction: row;\n  flex-flow: wrap;\n  justify-content: space-between;\n  align-items: baseline; }\n  .flex .col {\n    width: 32%;\n    padding: 20px; }\n\n@media (max-width: 600px) {\n  .flex {\n    display: block; }\n    .flex .col {\n      width: 100%;\n      margin: 0 0 10px 0; } }\n\n@keyframes fadein {\n  from {\n    opacity: 0; }\n  to {\n    opacity: 1; } }\n\n@keyframes shake {\n  10%, 90% {\n    transform: translate3d(-1px, 0, 0); }\n  20%, 80% {\n    transform: translate3d(2px, 0, 0); }\n  30%, 50%, 70% {\n    transform: translate3d(-4px, 0, 0); }\n  40%, 60% {\n    transform: translate3d(4px, 0, 0); } }\n\n* {\n  box-sizing: border-box; }\n\nbody {\n  padding: 20px; }\n\nbody, input {\n  font-family: \"Open Sans\", sans-serif;\n  color: darkgray; }\n\nh1 {\n  animation: shake 1s;\n  font-family: \"Pacifico\", cursive;\n  color: mediumvioletred;\n  text-align: center; }\n\nform.search {\n  text-align: center; }\n  form.search input, form.search button {\n    border-radius: 3px; }\n  form.search input {\n    width: 150px;\n    border: 2px solid lightgray; }\n  form.search button {\n    margin-left: 5px;\n    border: 2px solid darkgray;\n    font-family: \"Open Sans\", sans-serif;\n    font-weight: bold;\n    width: 70px;\n    animation: shake 1s;\n    animation-delay: 1s; }\n"; });
 define('text!styles/image.css', ['module'], function(module) { module.exports = "@keyframes fadein {\n  from {\n    opacity: 0; }\n  to {\n    opacity: 1; } }\n\n@keyframes shake {\n  10%, 90% {\n    transform: translate3d(-1px, 0, 0); }\n  20%, 80% {\n    transform: translate3d(2px, 0, 0); }\n  30%, 50%, 70% {\n    transform: translate3d(-4px, 0, 0); }\n  40%, 60% {\n    transform: translate3d(4px, 0, 0); } }\n\npicture {\n  animation: fadein ease-in 1s; }\n\nimg {\n  border: 5px solid black;\n  border-radius: 5px; }\n\nh5 {\n  margin-top: 0;\n  text-align: center; }\n"; });
+define('text!styles/main.css', ['module'], function(module) { module.exports = "@import url(\"https://fonts.googleapis.com/css?family=Open+Sans|Pacifico\");\n.flex {\n  display: flex;\n  flex-direction: row;\n  flex-flow: wrap;\n  justify-content: space-between;\n  align-items: baseline; }\n  .flex .col {\n    width: 32%;\n    padding: 20px; }\n\n@media (max-width: 600px) {\n  .flex {\n    display: block; }\n    .flex .col {\n      width: 100%;\n      margin: 0 0 10px 0; } }\n\n@keyframes fadein {\n  from {\n    opacity: 0; }\n  to {\n    opacity: 1; } }\n\n@keyframes shake {\n  10%, 90% {\n    transform: translate3d(-1px, 0, 0); }\n  20%, 80% {\n    transform: translate3d(2px, 0, 0); }\n  30%, 50%, 70% {\n    transform: translate3d(-4px, 0, 0); }\n  40%, 60% {\n    transform: translate3d(4px, 0, 0); } }\n\n* {\n  box-sizing: border-box; }\n\nbody {\n  padding: 20px; }\n\nbody, input {\n  font-family: \"Open Sans\", sans-serif;\n  color: darkgray; }\n\nh1 {\n  animation: shake 1s;\n  font-family: \"Pacifico\", cursive;\n  color: mediumvioletred;\n  text-align: center; }\n\nform.search {\n  text-align: center; }\n  form.search input, form.search button {\n    border-radius: 3px; }\n  form.search input {\n    width: 150px;\n    border: 2px solid lightgray; }\n  form.search button {\n    margin-left: 5px;\n    border: 2px solid darkgray;\n    font-family: \"Open Sans\", sans-serif;\n    font-weight: bold;\n    width: 70px;\n    animation: shake 1s;\n    animation-delay: 1s; }\n"; });
 //# sourceMappingURL=app-bundle.js.map

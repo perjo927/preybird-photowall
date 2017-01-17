@@ -1,6 +1,32 @@
-import { FlickrImage } from './resources/elements/flickr-image';
+// import { FlickrWindow } from './app';
+import { HttpClientConfig } from './resources/configuration/httpClientConfig';
+//import { HttpClientConfig } from './resources/configuration/httpClientConfig';
 import { autoinject } from 'aurelia-framework';
-import { HttpClient } from 'aurelia-fetch-client';
+import { FlickrImage } from './resources/elements/flickr-image';
+import { FlickrApiPublicConfig } from './resources/configuration/flickrApiConfig';
+// import { FlickrApiAppKeyConfig } from './flickrApiConfig';
+import { FlickrApi } from './resources/configuration/flickrApi.interface';
+import { HttpClient } from 'aurelia-http-client';
+
+// export class FlickrWindow extends Window {
+//   jsonFlickrFeed(rsp) {
+//     console.log(rsp)
+//       if (rsp.stat != "ok") {
+//         // something broke!
+//         return;
+//       }
+//       console.log(rsp)
+//   }
+// }
+
+    window.jsonFlickrFeed = function jsonFlickrFeed(rsp) {
+      console.log(rsp)
+      if (rsp.stat != "ok") {
+        // something broke!
+        return;
+      }
+      console.log(rsp)
+    }
 
 
 @autoinject
@@ -8,34 +34,31 @@ export class App {
   images: FlickrImage[] = [];
   searchText = '';
   title = 'My Photo Wall';
+  flickrApiConfig: FlickrApi;
+  // window : Window;
+  http: HttpClient;
 
-  constructor(private http: HttpClient) {
-
-    // TODO: cors
-    // TODO: fetch from httpclientconfig.json
-    http.configure(config => {
-      config
-        .withBaseUrl("https://api.flickr.com/services/feeds/photos_public.gne/?format=json&nojsoncallback=1&tags=")
-        .withDefaults({
-          credentials: 'same-origin',
-          headers: {
-            'Accept': 'application/json',
-            'X-Requested-With': 'Fetch',
-          }
-        })
-        .withInterceptor({
-          request(request) {
-            console.log(`Requesting ${request.method} ${request.url}`);
-            return request;
-          },
-          response(response) {
-            console.log(`Received ${response.status} ${response.url}`);
-            return response;
-          }
-        });
+  constructor(private httpClientConfig: HttpClientConfig, flickrApiConfig: FlickrApiPublicConfig) {
+    // this.window = new Window();
+    
+    let http = httpClientConfig.get({
+      baseUrl: flickrApiConfig.get()
     });
+    //Better handling
+    // window.jsonFlickrFeed = function jsonFlickrFeed(rsp) {
+    //   console.log(rsp)
+    //   if (rsp.stat != "ok") {
+    //     // something broke!
+    //     return;
+    //   }
+    //   console.log(rsp)
+    // }
   }
 
+  async apiKeySearch() {
+    // Fetch api key
+    // Inject search method through interface
+  }
 
   async search() {
     if (this.searchText) {
@@ -46,24 +69,28 @@ export class App {
 
       // Fetch
       try {
-        var fetchOptions = { method: 'GET',               
-               mode: 'cors',
-               cache: 'default' };
+        var fetchOptions = {
+          method: 'GET',
+          mode: 'cors',
+          cache: 'default'
+        };
 
-        let response = await this.http.fetch(urlTags, fetchOptions); 
-        let data = await response.json();
+        let response = await this.http.jsonp(urlTags, 'jsonp')
+        // console.log(response);
+        // let response = await this.http.fetch(urlTags, fetchOptions); 
+        // let data = await response;//.json();
 
-        let items = data.items;
+        // let items = data.items;
 
-          // TODO: 
-          // Process data, use base handler
-          for (let i of items) {
-            this.images.push(new FlickrImage(i.media.m, i.title))
-          }
+        // TODO: 
+        // Process data, use base handler
+        // for (let i of items) {
+        //   this.images.push(new FlickrImage(i.media.m, i.title))
+        // }
       }
       catch (err) {
         console.log(err);
-      }      
+      }
 
       // Reset
       this.searchText = '';

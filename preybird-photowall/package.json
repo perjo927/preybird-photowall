@@ -18,6 +18,7 @@
   "devDependencies": {
     "aurelia-cli": "^0.24.0",
     "aurelia-fetch-client": "^1.1.0",
+    "aurelia-http-client": "^1.0.4",
     "aurelia-testing": "^1.0.0-beta.2.0.0",
     "aurelia-tools": "^0.2.2",
     "browser-sync": "^2.13.0",
