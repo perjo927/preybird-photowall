@@ -3,7 +3,6 @@ import { autoinject } from 'aurelia-framework';
 import { FlickrWindow } from './resources/elements/flickr-window.interface';
 import { FlickrImage } from './resources/elements/flickr-image';
 import { FlickrApiPublic } from './resources/configuration/flickrApiPublic';
-// import { FlickrApiPhotosSearch } from './resources/configuration/flickrApiPhotosSearch';
 
 @autoinject
 export class App {

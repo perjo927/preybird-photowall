@@ -1,10 +1,19 @@
 @import './keyframes';
+@import './grid';
+
+flickr-image {
+    display: block;
+    text-align: center;
+}
 
 picture {
     animation: fadein ease-in 1s;
 }
 
 img {
+    height: 175px;
+    max-width: 175px;
+
     border: 5px solid white;
     box-shadow: 0px 0px 2px black;
 }
@@ -12,4 +21,11 @@ img {
 h5 {
     margin-top: 0;
     text-align: center;
+}
+
+@media (min-width: $medium-size) {
+    img {
+        height: 300px;
+        max-width: 300px;
+    }
 }
