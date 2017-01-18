@@ -18,18 +18,10 @@ export class FlickrApiPublic implements FlickrApi {
 
     async search(text: string) {
         // TODO: replace whitespace with comma, for tags, massage
-        let urlTags = text;
 
-        // Fetch
         try {
-
-
-            let response = await this.httpClient.jsonp(urlTags, 'jsonp')
-            console.log(response);
-
-            // ?? //
-
-            return []; // ?
+            let response = await this.httpClient.jsonp(text, 'jsonp')
+            return;
         }
         catch (err) {
             console.log(err);
@@ -40,8 +32,6 @@ export class FlickrApiPublic implements FlickrApi {
         let items = imageData.items;
         let images: FlickrImage[] = [];
 
-        // TODO: 
-        //Process data, use base handler
         for (let i of items) {
             images.push(new FlickrImage(i.media.m, i.title))
         }

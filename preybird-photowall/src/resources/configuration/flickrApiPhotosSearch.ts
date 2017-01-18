@@ -17,9 +17,6 @@ export class FlickrApiPhotosSearch implements FlickrApi {
     }
 
     async search(text: string) {
-        let urlTags = text;
-
-        // Fetch
         try {
             var fetchOptions = {
                 method: 'GET',
@@ -27,11 +24,11 @@ export class FlickrApiPhotosSearch implements FlickrApi {
                 cache: 'default'
             };
 
-            let response = await this.httpClient.fetch(urlTags, fetchOptions);
+            let response = await this.httpClient.fetch(text, fetchOptions);
             let data = await response.json();
             console.log(data);
 
-            return [];
+            return;
         }
         catch (err) {
             console.log(err);

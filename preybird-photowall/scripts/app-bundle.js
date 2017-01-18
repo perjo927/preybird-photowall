@@ -120,24 +120,20 @@ define('resources/configuration/flickrApiPublic',["require", "exports", "aurelia
         }
         FlickrApiPublic.prototype.search = function (text) {
             return __awaiter(this, void 0, void 0, function () {
-                var urlTags, response, err_1;
+                var response, err_1;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            urlTags = text;
-                            _a.label = 1;
+                            _a.trys.push([0, 2, , 3]);
+                            return [4 /*yield*/, this.httpClient.jsonp(text, 'jsonp')];
                         case 1:
-                            _a.trys.push([1, 3, , 4]);
-                            return [4 /*yield*/, this.httpClient.jsonp(urlTags, 'jsonp')];
-                        case 2:
                             response = _a.sent();
-                            console.log(response);
-                            return [2 /*return*/, []];
-                        case 3:
+                            return [2 /*return*/];
+                        case 2:
                             err_1 = _a.sent();
                             console.log(err_1);
-                            return [3 /*break*/, 4];
-                        case 4: return [2 /*return*/];
+                            return [3 /*break*/, 3];
+                        case 3: return [2 /*return*/];
                     }
                 });
             });
@@ -263,32 +259,29 @@ define('resources/configuration/flickrApiPhotosSearch',["require", "exports", "a
         }
         FlickrApiPhotosSearch.prototype.search = function (text) {
             return __awaiter(this, void 0, void 0, function () {
-                var urlTags, fetchOptions, response, data, err_1;
+                var fetchOptions, response, data, err_1;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            urlTags = text;
-                            _a.label = 1;
-                        case 1:
-                            _a.trys.push([1, 4, , 5]);
+                            _a.trys.push([0, 3, , 4]);
                             fetchOptions = {
                                 method: 'GET',
                                 mode: 'cors',
                                 cache: 'default'
                             };
-                            return [4 /*yield*/, this.httpClient.fetch(urlTags, fetchOptions)];
-                        case 2:
+                            return [4 /*yield*/, this.httpClient.fetch(text, fetchOptions)];
+                        case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.json()];
-                        case 3:
+                        case 2:
                             data = _a.sent();
                             console.log(data);
-                            return [2 /*return*/, []];
-                        case 4:
+                            return [2 /*return*/];
+                        case 3:
                             err_1 = _a.sent();
                             console.log(err_1);
-                            return [3 /*break*/, 5];
-                        case 5: return [2 /*return*/];
+                            return [3 /*break*/, 4];
+                        case 4: return [2 /*return*/];
                     }
                 });
             });
@@ -360,7 +353,6 @@ define('app',["require", "exports", "aurelia-framework", "./resources/configurat
             this.title = 'My Photo Wall';
             this.window = window;
             this.window.jsonFlickrFeed = function (data) {
-                console.log(data);
                 _this.images = _this.flickrApi.handle(data);
             };
         }
