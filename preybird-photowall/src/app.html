@@ -1,19 +1,23 @@
 <template>
   <require from="./styles/main.css"></require>
-  <require from="./resources/elements/flickr-image.html"></require>  
+  <require from="./resources/elements/flickr-image.html"></require>
 
   <h1>${title}</h1>
 
-  <form submit.trigger="search()">
-    <input type="text" value.bind="searchText">
-    <button type="Search">Search</button>
+  <form submit.trigger="search()" class="search">
+    <span class="form">
+      <input type="text" value.bind="searchText">
+      <button type="Search">Search</button>
+    </span>
   </form>
 
-  <ul>
-    <li repeat.for="image of images">
-      <flickr-image link.bind="image.link" title.bind="image.title">
+  <!-- TODO: ListView -->
+  <!-- TODO: Picture changer -->
+  <div class="flex"> 
+    <div class="col" repeat.for="image of images">
+      <!-- TODO: render/append each element sequentially, add delay -->    
+      <flickr-image link.bind="image.link" linkBig.bind="image.linkBig" title.bind="image.title">
       </flickr-image>
-    <li>
-  </ul>
-
+    </div>
+  </div>
 </template>

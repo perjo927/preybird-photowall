@@ -1,7 +1,10 @@
-<template bindable="link, title">
-    <h4>${title}</h4>
+<template bindable="link, linkBig, title">
+   <require from="../../styles/image.css"></require>
+  
     <picture>
-        <!--<source srcset="mdn-logo-wide.png" media="(min-width: 600px)">-->
+        <source srcset="${linkBig}" media="(min-width: 600px)">
         <img src="${link}" alt="${title}">
     </picture>
+    <h5>${title}</h5>
+
 </template>
