@@ -4,13 +4,7 @@ import { autoinject } from 'aurelia-framework';
 import { FlickrImage } from './resources/elements/flickr-image';
 import { FlickrApiPublic } from './resources/configuration/flickrApiPublic';
 // import { FlickrApiPhotosSearch } from './resources/configuration/flickrApiPhotosSearch';
-
-// import { FlickrWindow } from './app';
-// TOOD
-export interface FlickrWindow extends Window {
-  jsonFlickrFeed(rsp): any;
-}
-
+import { FlickrWindow } from './resources/elements/flickr-window.interface';
 
 @autoinject
 export class App {
@@ -38,8 +32,7 @@ export class App {
   }
 
   private reset() {
-    // Reset
     this.searchText = '';
-    this.images = []; // TODO: reset
+    this.images = [];
   }
 }
