@@ -1,9 +1,9 @@
-import { FlickrImage } from './../elements/flickr-image';
 import { autoinject } from 'aurelia-framework';
 import { HttpClient } from 'aurelia-http-client';
 
 import { HttpClientConfig } from './httpClientConfig';
 import { FlickrApi } from './flickrApi.interface';
+import { FlickrImage } from './../elements/flickr-image';
 
 @autoinject
 export class FlickrApiPublic implements FlickrApi {
@@ -29,7 +29,7 @@ export class FlickrApiPublic implements FlickrApi {
 
             // ?? //
 
-            return [];
+            return []; // ?
         }
         catch (err) {
             console.log(err);

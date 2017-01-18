@@ -3,7 +3,7 @@ import { HttpClient } from 'aurelia-fetch-client';
 
 import { HttpClientConfig } from './fetchClientConfig';
 import { FlickrApi } from './flickrApi.interface';
-
+import { FlickrImage } from './../elements/flickr-image';
 
 @autoinject
 export class FlickrApiPhotosSearch implements FlickrApi {
@@ -36,5 +36,9 @@ export class FlickrApiPhotosSearch implements FlickrApi {
         catch (err) {
             console.log(err);
         }
+    }
+
+    handle(imageData): FlickrImage[] {
+        throw new Error("Not implemented");
     }
 }
