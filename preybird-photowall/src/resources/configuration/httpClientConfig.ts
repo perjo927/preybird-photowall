@@ -1,17 +1,18 @@
+import { autoinject } from 'aurelia-framework';
+
 import { HttpClient } from 'aurelia-http-client';
 import { ClientConfig } from './clientConfig.interface';
-import { autoinject } from 'aurelia-framework';
 
 @autoinject
 export class HttpClientConfig implements ClientConfig {
     httpClient: HttpClient;
 
     constructor(httpClient: HttpClient) { 
-        // wtf autoinject
-         this.httpClient = new HttpClient();
+         this.httpClient = httpClient;
     }
 
     get(options: any) {
+        console.log(options)
         this.httpClient.configure(config => {
             config
                 .withBaseUrl(options.baseUrl)

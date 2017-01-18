@@ -7,6 +7,7 @@ export class HttpClientConfig implements ClientConfig {
     httpClient: HttpClient;
 
     constructor(httpClient: HttpClient) {
+        this.httpClient = httpClient;
     }
 
     get(options: any) {
@@ -17,7 +18,6 @@ export class HttpClientConfig implements ClientConfig {
                     credentials: 'same-origin',
                     headers: {
                         'Accept': 'application/json',
-                        'X-Requested-With': 'Fetch',
                     }
                 })
                 .withInterceptor({

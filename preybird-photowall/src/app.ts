@@ -1,32 +1,15 @@
-// import { FlickrWindow } from './app';
-import { HttpClientConfig } from './resources/configuration/httpClientConfig';
-//import { HttpClientConfig } from './resources/configuration/httpClientConfig';
 import { autoinject } from 'aurelia-framework';
+
+
 import { FlickrImage } from './resources/elements/flickr-image';
-import { FlickrApiPublicConfig } from './resources/configuration/flickrApiConfig';
-// import { FlickrApiAppKeyConfig } from './flickrApiConfig';
-import { FlickrApi } from './resources/configuration/flickrApi.interface';
-import { HttpClient } from 'aurelia-http-client';
+import { FlickrApiPublic } from './resources/configuration/flickrApiPublic';
+// import { FlickrApiPhotosSearch } from './resources/configuration/flickrApiPhotosSearch';
 
-// export class FlickrWindow extends Window {
-//   jsonFlickrFeed(rsp) {
-//     console.log(rsp)
-//       if (rsp.stat != "ok") {
-//         // something broke!
-//         return;
-//       }
-//       console.log(rsp)
-//   }
-// }
-
-    window.jsonFlickrFeed = function jsonFlickrFeed(rsp) {
-      console.log(rsp)
-      if (rsp.stat != "ok") {
-        // something broke!
-        return;
-      }
-      console.log(rsp)
-    }
+// import { FlickrWindow } from './app';
+// TOOD
+export interface FlickrWindow extends Window {
+  jsonFlickrFeed(rsp):any;
+}
 
 
 @autoinject
@@ -34,48 +17,39 @@ export class App {
   images: FlickrImage[] = [];
   searchText = '';
   title = 'My Photo Wall';
-  flickrApiConfig: FlickrApi;
-  // window : Window;
-  http: HttpClient;
+  window : FlickrWindow;
+  
 
-  constructor(private httpClientConfig: HttpClientConfig, flickrApiConfig: FlickrApiPublicConfig) {
-    // this.window = new Window();
+  constructor(private flickrApi: FlickrApiPublic) {
+    this.window = <FlickrWindow>window //as FlickrWindow;
     
-    let http = httpClientConfig.get({
-      baseUrl: flickrApiConfig.get()
-    });
-    //Better handling
-    // window.jsonFlickrFeed = function jsonFlickrFeed(rsp) {
-    //   console.log(rsp)
-    //   if (rsp.stat != "ok") {
-    //     // something broke!
-    //     return;
-    //   }
-    //   console.log(rsp)
-    // }
-  }
-
-  async apiKeySearch() {
-    // Fetch api key
-    // Inject search method through interface
+    //Better handling, only valid if Public API
+    this.window.jsonFlickrFeed = (rsp) => {
+      console.log(rsp, this.title)
+      if (rsp.stat != "ok") {
+        console.log(rsp.stat)
+        return;
+      }
+      console.log(rsp, this.title)
+    }
   }
 
   async search() {
     if (this.searchText) {
-      this.images = [];
-      // TODO: replace whitespace with comma
-      // Tags
-      let urlTags = this.searchText;
+
+      this.flickrApi.search(this.searchText);
+
+      this.reset();
 
       // Fetch
       try {
-        var fetchOptions = {
-          method: 'GET',
-          mode: 'cors',
-          cache: 'default'
-        };
+        // var fetchOptions = {
+        //   method: 'GET',
+        //   mode: 'cors',
+        //   cache: 'default'
+        // };
 
-        let response = await this.http.jsonp(urlTags, 'jsonp')
+        
         // console.log(response);
         // let response = await this.http.fetch(urlTags, fetchOptions); 
         // let data = await response;//.json();
@@ -92,8 +66,14 @@ export class App {
         console.log(err);
       }
 
-      // Reset
-      this.searchText = '';
+      
     }
+  }
+
+  private reset() {
+    // Reset
+      this.searchText = '';
+      this.images = []; // TODO: reset
+      
   }
 }
