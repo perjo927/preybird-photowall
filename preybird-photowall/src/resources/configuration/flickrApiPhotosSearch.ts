@@ -31,14 +31,6 @@ export class FlickrApiPhotosSearch implements FlickrApi {
             let data = await response.json();
             console.log(data);
 
-
-            // let items = data.items;
-
-            // TODO: 
-            // Process data, use base handler
-            // for (let i of items) {
-            //   this.images.push(new FlickrImage(i.media.m, i.title))
-            // }
             return [];
         }
         catch (err) {

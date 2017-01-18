@@ -12,7 +12,6 @@ export class HttpClientConfig implements ClientConfig {
     }
 
     get(options: any) {
-        console.log(options)
         this.httpClient.configure(config => {
             config
                 .withBaseUrl(options.baseUrl)

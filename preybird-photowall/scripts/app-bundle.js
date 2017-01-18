@@ -35,7 +35,6 @@ define('resources/configuration/httpClientConfig',["require", "exports", "aureli
             this.httpClient = httpClient;
         }
         HttpClientConfig.prototype.get = function (options) {
-            console.log(options);
             this.httpClient.configure(function (config) {
                 config
                     .withBaseUrl(options.baseUrl)
@@ -109,7 +108,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define('resources/configuration/flickrApiPublic',["require", "exports", "aurelia-framework", "./httpClientConfig"], function (require, exports, aurelia_framework_1, httpClientConfig_1) {
+define('resources/configuration/flickrApiPublic',["require", "exports", "./../elements/flickr-image", "aurelia-framework", "./httpClientConfig"], function (require, exports, flickr_image_1, aurelia_framework_1, httpClientConfig_1) {
     "use strict";
     var FlickrApiPublic = (function () {
         function FlickrApiPublic(httpClientConfig) {
@@ -142,6 +141,15 @@ define('resources/configuration/flickrApiPublic',["require", "exports", "aurelia
                     }
                 });
             });
+        };
+        FlickrApiPublic.prototype.handle = function (imageData) {
+            var items = imageData.items;
+            var images = [];
+            for (var _i = 0, items_1 = items; _i < items_1.length; _i++) {
+                var i = items_1[_i];
+                images.push(new flickr_image_1.FlickrImage(i.media.m, i.title));
+            }
+            return images;
         };
         return FlickrApiPublic;
     }());
@@ -348,13 +356,9 @@ define('app',["require", "exports", "aurelia-framework", "./resources/configurat
             this.searchText = '';
             this.title = 'My Photo Wall';
             this.window = window;
-            this.window.jsonFlickrFeed = function (rsp) {
-                console.log(rsp, _this.title);
-                if (rsp.stat != "ok") {
-                    console.log(rsp.stat);
-                    return;
-                }
-                console.log(rsp, _this.title);
+            this.window.jsonFlickrFeed = function (data) {
+                console.log(data);
+                _this.images = _this.flickrApi.handle(data);
             };
         }
         App.prototype.search = function () {
@@ -363,11 +367,6 @@ define('app',["require", "exports", "aurelia-framework", "./resources/configurat
                     if (this.searchText) {
                         this.flickrApi.search(this.searchText);
                         this.reset();
-                        try {
-                        }
-                        catch (err) {
-                            console.log(err);
-                        }
                     }
                     return [2 /*return*/];
                 });
@@ -426,6 +425,6 @@ define('resources/index',["require", "exports"], function (require, exports) {
 
 define('text!app.html', ['module'], function(module) { module.exports = "<template><require from=./styles/main.css></require><require from=./resources/elements/flickr-image.html></require><h1>${title}</h1><form submit.trigger=search() class=search><span class=form><input type=text value.bind=searchText><button type=Search>Search</button></span></form><div class=flex><div class=col repeat.for=\"image of images\"><flickr-image link.bind=image.link linkbig.bind=image.linkBig title.bind=image.title></flickr-image></div></div></template>"; });
 define('text!resources/elements/flickr-image.html', ['module'], function(module) { module.exports = "<template bindable=\"link, linkBig, title\"><require from=../../styles/image.css></require><picture><source srcset=${linkBig} media=\"(min-width: 600px)\"><img src=${link} alt=${title}></picture><h5>${title}</h5></template>"; });
-define('text!styles/image.css', ['module'], function(module) { module.exports = "@keyframes fadein {\n  from {\n    opacity: 0; }\n  to {\n    opacity: 1; } }\n\n@keyframes shake {\n  10%, 90% {\n    transform: translate3d(-1px, 0, 0); }\n  20%, 80% {\n    transform: translate3d(2px, 0, 0); }\n  30%, 50%, 70% {\n    transform: translate3d(-4px, 0, 0); }\n  40%, 60% {\n    transform: translate3d(4px, 0, 0); } }\n\npicture {\n  animation: fadein ease-in 1s; }\n\nimg {\n  border: 5px solid black;\n  border-radius: 5px; }\n\nh5 {\n  margin-top: 0;\n  text-align: center; }\n"; });
+define('text!styles/image.css', ['module'], function(module) { module.exports = "@keyframes fadein {\n  from {\n    opacity: 0; }\n  to {\n    opacity: 1; } }\n\n@keyframes shake {\n  10%, 90% {\n    transform: translate3d(-1px, 0, 0); }\n  20%, 80% {\n    transform: translate3d(2px, 0, 0); }\n  30%, 50%, 70% {\n    transform: translate3d(-4px, 0, 0); }\n  40%, 60% {\n    transform: translate3d(4px, 0, 0); } }\n\npicture {\n  animation: fadein ease-in 1s; }\n\nimg {\n  border: 5px solid white;\n  box-shadow: 0px 0px 2px black; }\n\nh5 {\n  margin-top: 0;\n  text-align: center; }\n"; });
 define('text!styles/main.css', ['module'], function(module) { module.exports = "@import url(\"https://fonts.googleapis.com/css?family=Open+Sans|Pacifico\");\n.flex {\n  display: flex;\n  flex-direction: row;\n  flex-flow: wrap;\n  justify-content: space-between;\n  align-items: baseline; }\n  .flex .col {\n    width: 32%;\n    padding: 20px; }\n\n@media (max-width: 600px) {\n  .flex {\n    display: block; }\n    .flex .col {\n      width: 100%;\n      margin: 0 0 10px 0; } }\n\n@keyframes fadein {\n  from {\n    opacity: 0; }\n  to {\n    opacity: 1; } }\n\n@keyframes shake {\n  10%, 90% {\n    transform: translate3d(-1px, 0, 0); }\n  20%, 80% {\n    transform: translate3d(2px, 0, 0); }\n  30%, 50%, 70% {\n    transform: translate3d(-4px, 0, 0); }\n  40%, 60% {\n    transform: translate3d(4px, 0, 0); } }\n\n* {\n  box-sizing: border-box; }\n\nbody {\n  padding: 20px; }\n\nbody, input {\n  font-family: \"Open Sans\", sans-serif;\n  color: darkgray; }\n\nh1 {\n  animation: shake 1s;\n  font-family: \"Pacifico\", cursive;\n  color: mediumvioletred;\n  text-align: center; }\n\nform.search {\n  text-align: center; }\n  form.search input, form.search button {\n    border-radius: 3px; }\n  form.search input {\n    width: 150px;\n    border: 2px solid lightgray; }\n  form.search button {\n    margin-left: 5px;\n    border: 2px solid darkgray;\n    font-family: \"Open Sans\", sans-serif;\n    font-weight: bold;\n    width: 70px;\n    animation: shake 1s;\n    animation-delay: 1s; }\n"; });
 //# sourceMappingURL=app-bundle.js.map

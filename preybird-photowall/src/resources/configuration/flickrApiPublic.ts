@@ -1,3 +1,4 @@
+import { FlickrImage } from './../elements/flickr-image';
 import { autoinject } from 'aurelia-framework';
 import { HttpClient } from 'aurelia-http-client';
 
@@ -25,22 +26,26 @@ export class FlickrApiPublic implements FlickrApi {
 
             let response = await this.httpClient.jsonp(urlTags, 'jsonp')
             console.log(response);
-            // let response = await this.http.fetch(urlTags, fetchOptions); 
-            // let data = await response;//.json();
 
-            // let items = data.items;
+            // ?? //
 
-            // TODO: 
-            // Process data, use base handler
-            // for (let i of items) {
-            //   this.images.push(new FlickrImage(i.media.m, i.title))
-            // }
-            
             return [];
         }
         catch (err) {
             console.log(err);
         }
+    }
+
+    handle(imageData): FlickrImage[] {
+        let items = imageData.items;
+        let images: FlickrImage[] = [];
+
+        // TODO: 
+        //Process data, use base handler
+        for (let i of items) {
+            images.push(new FlickrImage(i.media.m, i.title))
+        }
+        return images;
     }
 }
 
