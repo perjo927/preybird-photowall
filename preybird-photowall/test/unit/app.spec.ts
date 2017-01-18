@@ -1,9 +1,13 @@
 import { App } from '../../src/app';
+import { HttpClient } from 'aurelia-fetch-client';
 
-describe('Given that there is an app', () => {
-  describe('Given that there is an app', () => {
+// TODO
+describe('Given that there is an app component', () => {
+  let http = new HttpClient();
+
+  describe('When the component is rendered', () => {
     it('Then it should says hello', () => {
-      expect(new App().message).toBe('Hello World!');
+      expect(new App().title).toBe('My Photo Wall');
     });
   });
 });

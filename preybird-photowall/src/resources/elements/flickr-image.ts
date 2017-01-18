@@ -1,10 +1,9 @@
-export interface Image {
-    link: string
-    title: string
-}
+import { Image } from "./image.interface"
 
 export class FlickrImage implements Image {   
+    linkBig: string;
+
     constructor (public link: string, public title: string) {
-        console.log(link, title);
+        this.linkBig = link;
     }
 }
