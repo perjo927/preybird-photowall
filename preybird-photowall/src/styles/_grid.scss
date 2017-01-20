@@ -1,5 +1,4 @@
-$small-size: 600px;
-$medium-size: 1000px;
+@import 'screen';
 
 .flex {
     display: flex;
@@ -14,7 +13,7 @@ $medium-size: 1000px;
     }
 }
 
-@media (max-width: $small-size) {
+@media screen and (max-width: $small-size) {
     .flex {
         display: block;
 
