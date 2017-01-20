@@ -124,20 +124,24 @@ define('resources/services/flickrPublicSearchService',["require", "exports", "au
         }
         FlickrPublicSearchService.prototype.search = function (text) {
             return __awaiter(this, void 0, void 0, function () {
-                var response, err_1;
+                var urlTags, response, err_1;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
-                            _a.trys.push([0, 2, , 3]);
-                            return [4 /*yield*/, this.httpClient.jsonp(text, 'jsonp')];
+                            urlTags = text.split(' ').join(',');
+                            console.log(text, urlTags);
+                            _a.label = 1;
                         case 1:
+                            _a.trys.push([1, 3, , 4]);
+                            return [4 /*yield*/, this.httpClient.jsonp(urlTags, 'jsonp')];
+                        case 2:
                             response = _a.sent();
                             return [2 /*return*/];
-                        case 2:
+                        case 3:
                             err_1 = _a.sent();
                             console.log(err_1);
-                            return [3 /*break*/, 3];
-                        case 3: return [2 /*return*/];
+                            return [3 /*break*/, 4];
+                        case 4: return [2 /*return*/];
                     }
                 });
             });

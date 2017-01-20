@@ -18,9 +18,13 @@ export class FlickrPublicSearchService implements FlickrService {
 
     async search(text: string) {
         // TODO: replace whitespace with comma, for tags, massage
+        // TODO: format method (base)
+        let urlTags = text.split(' ').join(',');
+        console.log(text,urlTags);
+
 
         try {
-            let response = await this.httpClient.jsonp(text, 'jsonp')
+            let response = await this.httpClient.jsonp(urlTags, 'jsonp')
             return;
         }
         catch (err) {

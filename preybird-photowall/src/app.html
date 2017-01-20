@@ -6,15 +6,15 @@
 
   <!-- TODO SearchForm -->
   <form submit.trigger="search()" class="search">
-      <input type="text" value.bind="searchText">
-      <button type="Search">Search</button>
+    <input type="text" value.bind="searchText">
+    <button type="Search">Search</button>
   </form>
 
   <!-- TODO: ListView -->
-  <!-- TODO: Picture changer -->
-  <div class="flex"> 
+  <!-- TODO: Change picture -->
+  <div class="flex">
     <div class="col" repeat.for="image of images">
-      <!-- TODO: render/append each element sequentially, add delay -->    
+      <!-- TODO: render/append each element sequentially, add delay -->
       <flickr-image link.bind="image.link" linkBig.bind="image.linkBig" title.bind="image.title">
       </flickr-image>
     </div>
