@@ -1,12 +1,12 @@
 import { autoinject } from 'aurelia-framework';
 import { HttpClient } from 'aurelia-fetch-client';
 
-import { HttpClientConfig } from './fetchClientConfig';
-import { FlickrApi } from './flickrApi.interface';
-import { FlickrImage } from './../elements/flickr-image';
+import { HttpClientConfig } from '../configuration/fetchClientConfig';
+import { FlickrService } from './flickrService.interface';
+import { FlickrImage } from '../elements/flickr-image';
 
 @autoinject
-export class FlickrApiPhotosSearch implements FlickrApi {
+export class FlickrPhotosSearchService implements FlickrService {
     baseUrl = "https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=108af4c065183c8377da15b6eeedd94a&format=json&nojsoncallback=1&text=";
     httpClient: HttpClient;
 

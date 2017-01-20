@@ -1,12 +1,12 @@
 import { autoinject } from 'aurelia-framework';
 import { HttpClient } from 'aurelia-http-client';
 
-import { HttpClientConfig } from './httpClientConfig';
-import { FlickrApi } from './flickrApi.interface';
-import { FlickrImage } from './../elements/flickr-image';
+import { HttpClientConfig } from '../configuration/httpClientConfig';
+import { FlickrService } from './flickrService.interface';
+import { FlickrImage } from '../elements/flickr-image';
 
 @autoinject
-export class FlickrApiPublic implements FlickrApi {
+export class FlickrPublicSearchService implements FlickrService {
     baseUrl = "https://api.flickr.com/services/feeds/photos_public.gne/?format=json&nojsoncallback=0&tags=";
     httpClient: HttpClient;
 

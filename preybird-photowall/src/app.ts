@@ -2,7 +2,7 @@ import { autoinject } from 'aurelia-framework';
 
 import { FlickrWindow } from './resources/elements/flickr-window.interface';
 import { FlickrImage } from './resources/elements/flickr-image';
-import { FlickrApiPublic } from './resources/configuration/flickrApiPublic';
+import { FlickrPublicSearchService } from './resources/services/flickrPublicSearchService';
 
 @autoinject
 export class App {
@@ -11,15 +11,15 @@ export class App {
   title = 'My Photo Wall';
   window = <FlickrWindow>window;
 
-  constructor(private flickrApi: FlickrApiPublic) {
+  constructor(private flickrService: FlickrPublicSearchService) {
     this.window.jsonFlickrFeed = (data) => {
-      this.images = this.flickrApi.handle(data)
+      this.images = this.flickrService.handle(data)
     }
   }
 
   async search() {
     if (this.searchText) {
-      this.flickrApi.search(this.searchText);
+      this.flickrService.search(this.searchText);
       this.reset();
     }
   }
