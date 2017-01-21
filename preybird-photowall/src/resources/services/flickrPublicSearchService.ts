@@ -17,11 +17,7 @@ export class FlickrPublicSearchService implements FlickrService {
     }
 
     async search(text: string) {
-        // TODO: replace whitespace with comma, for tags, massage
-        // TODO: format method (base)
-        let urlTags = text.split(' ').join(',');
-        console.log(text,urlTags);
-
+        let urlTags = this.createQueryString(text);
 
         try {
             let response = await this.httpClient.jsonp(urlTags, 'jsonp')
@@ -40,6 +36,10 @@ export class FlickrPublicSearchService implements FlickrService {
             images.push(new FlickrImage(i.media.m, i.title))
         }
         return images;
+    }
+
+    private createQueryString(text: string): string {
+        return text.split(' ').join(',');
     }
 }
 

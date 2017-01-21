@@ -1,16 +1,14 @@
 <template>
   <require from="./styles/main.css"></require>
   <require from="./resources/elements/flickr-image.html"></require>
+  <require from="./resources/elements/search-form.html"></require>
 
   <h1>${title}</h1>
 
-  <!-- TODO SearchForm -->
-  <form submit.trigger="search()" class="search">
-    <input type="text" value.bind="searchText">
-    <button type="Search">Search</button>
-  </form>
+  <search-form search.call="search()" text.two-way="searchText">
+    Go
+  </search-form>
 
-  <!-- TODO: ListView -->
   <!-- TODO: Change picture -->
   <div class="flex">
     <div class="col" repeat.for="image of images">
