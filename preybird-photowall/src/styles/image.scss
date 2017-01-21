@@ -15,8 +15,7 @@ picture {
 }
 
 img {
-    height: $small-image;
-    width: $small-image;
+    max-height: $small-image;
     max-width: $small-image;
 
     border: 5px solid white;
@@ -30,16 +29,14 @@ h5 {
 
 @media screen and (min-width: $medium-size) {
     img {
-        height: $medium-image;
-        width: $medium-image;        
+        max-height: $medium-image;
         max-width: $medium-image;
     }
 }
 
 @media screen and (max-width: $small-size) {
     img {
-        height: $medium-image;
-        width: $medium-image;
+        max-height: $medium-image;
         max-width: $medium-image
     }
 }
