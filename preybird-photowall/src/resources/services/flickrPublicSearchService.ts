@@ -1,12 +1,12 @@
 import { autoinject } from 'aurelia-framework';
 import { HttpClient } from 'aurelia-http-client';
 
-import { HttpClientConfig } from './httpClientConfig';
-import { FlickrApi } from './flickrApi.interface';
-import { FlickrImage } from './../elements/flickr-image';
+import { HttpClientConfig } from '../configuration/httpClientConfig';
+import { FlickrService } from './flickrService.interface';
+import { FlickrImage } from '../elements/flickr-image';
 
 @autoinject
-export class FlickrApiPublic implements FlickrApi {
+export class FlickrPublicSearchService implements FlickrService {
     baseUrl = "https://api.flickr.com/services/feeds/photos_public.gne/?format=json&nojsoncallback=0&tags=";
     httpClient: HttpClient;
 
@@ -17,10 +17,10 @@ export class FlickrApiPublic implements FlickrApi {
     }
 
     async search(text: string) {
-        // TODO: replace whitespace with comma, for tags, massage
+        let urlTags = this.createQueryString(text);
 
         try {
-            let response = await this.httpClient.jsonp(text, 'jsonp')
+            let response = await this.httpClient.jsonp(urlTags, 'jsonp')
             return;
         }
         catch (err) {
@@ -36,6 +36,10 @@ export class FlickrApiPublic implements FlickrApi {
             images.push(new FlickrImage(i.media.m, i.title))
         }
         return images;
+    }
+
+    private createQueryString(text: string): string {
+        return text.split(' ').join(',');
     }
 }
 
