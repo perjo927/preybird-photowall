@@ -1,5 +1,9 @@
 @import './keyframes';
-@import './grid';
+@import 'screen';
+
+$small-image: 175px;
+$medium-image: 250px;
+$large-image: 300px;
 
 flickr-image {
     display: block;
@@ -11,8 +15,9 @@ picture {
 }
 
 img {
-    height: 175px;
-    max-width: 175px;
+    height: $small-image;
+    width: $small-image;
+    max-width: $small-image;
 
     border: 5px solid white;
     box-shadow: 0px 0px 2px black;
@@ -23,9 +28,18 @@ h5 {
     text-align: center;
 }
 
-@media (min-width: $medium-size) {
+@media screen and (min-width: $medium-size) {
     img {
-        height: 300px;
-        max-width: 300px;
+        height: $medium-image;
+        width: $medium-image;        
+        max-width: $medium-image;
+    }
+}
+
+@media screen and (max-width: $small-size) {
+    img {
+        height: $medium-image;
+        width: $medium-image;
+        max-width: $medium-image
     }
 }

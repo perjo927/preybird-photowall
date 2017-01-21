@@ -1,0 +1,8 @@
+<template bindable="search, text"> 
+    <form submit.trigger="search()" class="search">
+        <input type="text" placeholder="Search" value.two-way="text">
+        <button type="submit">
+            <slot></slot>
+        </button>
+    </form>
+</template>
