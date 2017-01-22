@@ -205,28 +205,27 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-define('app',["require", "exports", "aurelia-framework", "./resources/services/flickrPublicSearchService", "./resources/elements/search-form"], function (require, exports, aurelia_framework_1, flickrPublicSearchService_1, search_form_1) {
+define('app',["require", "exports", "aurelia-framework", "./resources/utilities/arrayShifter", "./resources/services/flickrPublicSearchService", "./resources/elements/search-form"], function (require, exports, aurelia_framework_1, arrayShifter_1, flickrPublicSearchService_1, search_form_1) {
     "use strict";
     var App = (function () {
-        function App(flickrService) {
+        function App(flickrService, arrayShifter) {
             var _this = this;
             this.flickrService = flickrService;
-            this.imageBuffer = [];
-            this.imagesToShow = [];
-            this.imagesLimit = 6;
-            this.interval = 2500;
+            this.arrayShifter = arrayShifter;
+            this.imageBuffer = new Array();
+            this.imagesToShow = new Array();
             this.searchText = '';
             this.title = 'My Photo Wall';
             this.window = window;
             this.searchForm = new search_form_1.SearchForm(this.flickrService);
             this.window.jsonFlickrFeed = function (data) {
                 _this.imageBuffer = _this.flickrService.handle(data);
-                _this.setTimer();
+                _this.switchImages();
             };
         }
         App.prototype.search = function () {
             if (this.searchText) {
-                this.resetTimer();
+                this.arrayShifter.reset();
                 this.searchForm.search(this.searchText);
                 this.resetSearch();
             }
@@ -235,39 +234,15 @@ define('app',["require", "exports", "aurelia-framework", "./resources/services/f
             this.searchText = '';
             this.imageBuffer, this.imagesToShow = [];
         };
-        App.prototype.resetTimer = function () {
-            clearInterval(this.intervalReference);
-        };
-        App.prototype.setTimer = function () {
-            var _this = this;
-            var bufferLength = this.imageBuffer.length;
-            var imagesLength = this.imagesToShow.length;
-            var newImages;
-            if (imagesLength === 0) {
-                var chunkSize = (bufferLength > this.imagesLimit) ? this.imagesLimit : bufferLength;
-                newImages = this.imageBuffer.splice(0, chunkSize);
-                (_a = this.imagesToShow).unshift.apply(_a, newImages);
-            }
-            this.intervalReference = setInterval(function () {
-                if (bufferLength > 0) {
-                    newImages = _this.imageBuffer.splice(0, 1);
-                    (_a = _this.imagesToShow).unshift.apply(_a, newImages);
-                    _this.imagesToShow.pop();
-                }
-                else {
-                    _this.resetTimer();
-                }
-                imagesLength = _this.imagesToShow.length;
-                bufferLength = _this.imageBuffer.length;
-                var _a;
-            }, this.interval);
-            var _a;
+        App.prototype.switchImages = function () {
+            this.arrayShifter.shift(this.imagesToShow, this.imageBuffer);
         };
         return App;
     }());
     App = __decorate([
         aurelia_framework_1.autoinject,
-        __metadata("design:paramtypes", [flickrPublicSearchService_1.FlickrPublicSearchService])
+        __metadata("design:paramtypes", [flickrPublicSearchService_1.FlickrPublicSearchService,
+            arrayShifter_1.ArrayShifter])
     ], App);
     exports.App = App;
 });
@@ -450,6 +425,124 @@ define('resources/services/flickrPhotosSearchService',["require", "exports", "au
         __metadata("design:paramtypes", [fetchClientConfig_1.HttpClientConfig])
     ], FlickrPhotosSearchService);
     exports.FlickrPhotosSearchService = FlickrPhotosSearchService;
+});
+
+define('resources/services/listViewSwitcherService',["require", "exports"], function (require, exports) {
+    "use strict";
+    var ListViewSwitcher = (function () {
+        function ListViewSwitcher() {
+        }
+        ListViewSwitcher.prototype.handle = function () {
+            var _this = this;
+            if (imagesLength === 0) {
+                var chunkSize = (bufferLength > this.imagesLimit) ? this.imagesLimit : bufferLength;
+                newImages = this.imageBuffer.splice(0, chunkSize);
+                (_a = this.imagesToShow).unshift.apply(_a, newImages);
+            }
+            this.intervalReference = setInterval(function () {
+                if (bufferLength > 0) {
+                    newImages = _this.imageBuffer.splice(0, 1);
+                    (_a = _this.imagesToShow).unshift.apply(_a, newImages);
+                    _this.imagesToShow.pop();
+                }
+                else {
+                    _this.resetTimer();
+                }
+                imagesLength = _this.imagesToShow.length;
+                bufferLength = _this.imageBuffer.length;
+                var _a;
+            }, this.interval);
+            var _a;
+        };
+        return ListViewSwitcher;
+    }());
+    exports.ListViewSwitcher = ListViewSwitcher;
+});
+
+define('resources/utilities/listViewSwitcherService',["require", "exports"], function (require, exports) {
+    "use strict";
+    var ListViewSwitcher = (function () {
+        function ListViewSwitcher() {
+        }
+        ListViewSwitcher.prototype.handle = function () {
+            var _this = this;
+            if (imagesLength === 0) {
+                var chunkSize = (bufferLength > this.imagesLimit) ? this.imagesLimit : bufferLength;
+                newImages = this.imageBuffer.splice(0, chunkSize);
+                (_a = this.imagesToShow).unshift.apply(_a, newImages);
+            }
+            this.intervalReference = setInterval(function () {
+                if (bufferLength > 0) {
+                    newImages = _this.imageBuffer.splice(0, 1);
+                    (_a = _this.imagesToShow).unshift.apply(_a, newImages);
+                    _this.imagesToShow.pop();
+                }
+                else {
+                    _this.resetTimer();
+                }
+                imagesLength = _this.imagesToShow.length;
+                bufferLength = _this.imageBuffer.length;
+                var _a;
+            }, this.interval);
+            var _a;
+        };
+        return ListViewSwitcher;
+    }());
+    exports.ListViewSwitcher = ListViewSwitcher;
+});
+
+define('resources/utilities/arrayShifter',["require", "exports"], function (require, exports) {
+    "use strict";
+    var ArrayShifter = (function () {
+        function ArrayShifter(arrayLimit, interval) {
+            if (arrayLimit === void 0) { arrayLimit = 6; }
+            if (interval === void 0) { interval = 2500; }
+            this.arrayLimit = arrayLimit;
+            this.interval = interval;
+        }
+        Object.defineProperty(ArrayShifter.prototype, "intervalLength", {
+            set: function (interval) {
+                this.interval = interval;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(ArrayShifter.prototype, "arraySize", {
+            set: function (arrayLimit) {
+                this.arrayLimit = arrayLimit;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ArrayShifter.prototype.shift = function (array, buffer) {
+            var _this = this;
+            var arrayLength = array.length;
+            var bufferLength = buffer.length;
+            var newItems;
+            if (arrayLength === 0) {
+                var chunkSize = (bufferLength > this.arrayLimit) ? this.arrayLimit : bufferLength;
+                newItems = buffer.splice(0, chunkSize);
+                array.unshift.apply(array, newItems);
+            }
+            this.intervalReference = setInterval(function () {
+                if (bufferLength > 0) {
+                    newItems = buffer.splice(0, 1);
+                    array.unshift.apply(array, newItems);
+                    array.pop();
+                }
+                else {
+                    _this.reset();
+                }
+                arrayLength = array.length;
+                bufferLength = buffer.length;
+            }, this.interval);
+        };
+        ArrayShifter.prototype.reset = function () {
+            clearInterval(this.intervalReference);
+        };
+        return ArrayShifter;
+    }());
+    exports.ArrayShifter = ArrayShifter;
 });
 
 define('text!app.html', ['module'], function(module) { module.exports = "<template><require from=./styles/main.css></require><require from=./resources/elements/flickr-image.html></require><require from=./resources/elements/search-form.html></require><require from=./resources/elements/grid-view.html></require><h1>${title}</h1><search-form search.call=search() text.two-way=searchText>Go</search-form><grid-view><div class=col repeat.for=\"image of imagesToShow\"><flickr-image class=\"${ $last ? 'fade-out' : ''}\" link.bind=image.link linkbig.bind=image.linkBig title.bind=image.title></flickr-image></div></grid-view></template>"; });
