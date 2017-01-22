@@ -1,3 +1,57 @@
+define('resources/utilities/arrayShifter',["require", "exports"], function (require, exports) {
+    "use strict";
+    var ArrayShifter = (function () {
+        function ArrayShifter(arrayLimit, interval) {
+            if (arrayLimit === void 0) { arrayLimit = 6; }
+            if (interval === void 0) { interval = 2500; }
+            this.arrayLimit = arrayLimit;
+            this.interval = interval;
+        }
+        Object.defineProperty(ArrayShifter.prototype, "intervalLength", {
+            set: function (interval) {
+                this.interval = interval;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(ArrayShifter.prototype, "arraySize", {
+            set: function (arrayLimit) {
+                this.arrayLimit = arrayLimit;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ArrayShifter.prototype.shift = function (array, buffer) {
+            var _this = this;
+            var arrayLength = array.length;
+            var bufferLength = buffer.length;
+            var newItems;
+            if (arrayLength === 0) {
+                var chunkSize = (bufferLength > this.arrayLimit) ? this.arrayLimit : bufferLength;
+                newItems = buffer.splice(0, chunkSize);
+                array.unshift.apply(array, newItems);
+            }
+            this.intervalReference = setInterval(function () {
+                if (bufferLength > 0) {
+                    newItems = buffer.splice(0, 1);
+                    array.unshift.apply(array, newItems);
+                    array.pop();
+                }
+                else {
+                    _this.reset();
+                }
+                arrayLength = array.length;
+                bufferLength = buffer.length;
+            }, this.interval);
+        };
+        ArrayShifter.prototype.reset = function () {
+            clearInterval(this.intervalReference);
+        };
+        return ArrayShifter;
+    }());
+    exports.ArrayShifter = ArrayShifter;
+});
+
 define('resources/elements/flickr-window.interface',["require", "exports"], function (require, exports) {
     "use strict";
 });
@@ -17,6 +71,10 @@ define('resources/elements/flickr-image',["require", "exports"], function (requi
         return FlickrImage;
     }());
     exports.FlickrImage = FlickrImage;
+});
+
+define('resources/services/flickrService.interface',["require", "exports"], function (require, exports) {
+    "use strict";
 });
 
 define('resources/configuration/clientConfig.interface',["require", "exports"], function (require, exports) {
@@ -64,10 +122,6 @@ define('resources/configuration/httpClientConfig',["require", "exports", "aureli
     exports.HttpClientConfig = HttpClientConfig;
 });
 
-define('resources/services/flickrService.interface',["require", "exports"], function (require, exports) {
-    "use strict";
-});
-
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -112,7 +166,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-define('resources/services/flickrPublicSearchService',["require", "exports", "aurelia-framework", "../configuration/httpClientConfig", "../elements/flickr-image"], function (require, exports, aurelia_framework_1, httpClientConfig_1, flickr_image_1) {
+define('resources/services/flickrPublicSearchService',["require", "exports", "aurelia-framework", "../elements/flickr-image", "../configuration/httpClientConfig"], function (require, exports, aurelia_framework_1, flickr_image_1, httpClientConfig_1) {
     "use strict";
     var FlickrPublicSearchService = (function () {
         function FlickrPublicSearchService(httpClientConfig) {
@@ -425,124 +479,6 @@ define('resources/services/flickrPhotosSearchService',["require", "exports", "au
         __metadata("design:paramtypes", [fetchClientConfig_1.HttpClientConfig])
     ], FlickrPhotosSearchService);
     exports.FlickrPhotosSearchService = FlickrPhotosSearchService;
-});
-
-define('resources/services/listViewSwitcherService',["require", "exports"], function (require, exports) {
-    "use strict";
-    var ListViewSwitcher = (function () {
-        function ListViewSwitcher() {
-        }
-        ListViewSwitcher.prototype.handle = function () {
-            var _this = this;
-            if (imagesLength === 0) {
-                var chunkSize = (bufferLength > this.imagesLimit) ? this.imagesLimit : bufferLength;
-                newImages = this.imageBuffer.splice(0, chunkSize);
-                (_a = this.imagesToShow).unshift.apply(_a, newImages);
-            }
-            this.intervalReference = setInterval(function () {
-                if (bufferLength > 0) {
-                    newImages = _this.imageBuffer.splice(0, 1);
-                    (_a = _this.imagesToShow).unshift.apply(_a, newImages);
-                    _this.imagesToShow.pop();
-                }
-                else {
-                    _this.resetTimer();
-                }
-                imagesLength = _this.imagesToShow.length;
-                bufferLength = _this.imageBuffer.length;
-                var _a;
-            }, this.interval);
-            var _a;
-        };
-        return ListViewSwitcher;
-    }());
-    exports.ListViewSwitcher = ListViewSwitcher;
-});
-
-define('resources/utilities/listViewSwitcherService',["require", "exports"], function (require, exports) {
-    "use strict";
-    var ListViewSwitcher = (function () {
-        function ListViewSwitcher() {
-        }
-        ListViewSwitcher.prototype.handle = function () {
-            var _this = this;
-            if (imagesLength === 0) {
-                var chunkSize = (bufferLength > this.imagesLimit) ? this.imagesLimit : bufferLength;
-                newImages = this.imageBuffer.splice(0, chunkSize);
-                (_a = this.imagesToShow).unshift.apply(_a, newImages);
-            }
-            this.intervalReference = setInterval(function () {
-                if (bufferLength > 0) {
-                    newImages = _this.imageBuffer.splice(0, 1);
-                    (_a = _this.imagesToShow).unshift.apply(_a, newImages);
-                    _this.imagesToShow.pop();
-                }
-                else {
-                    _this.resetTimer();
-                }
-                imagesLength = _this.imagesToShow.length;
-                bufferLength = _this.imageBuffer.length;
-                var _a;
-            }, this.interval);
-            var _a;
-        };
-        return ListViewSwitcher;
-    }());
-    exports.ListViewSwitcher = ListViewSwitcher;
-});
-
-define('resources/utilities/arrayShifter',["require", "exports"], function (require, exports) {
-    "use strict";
-    var ArrayShifter = (function () {
-        function ArrayShifter(arrayLimit, interval) {
-            if (arrayLimit === void 0) { arrayLimit = 6; }
-            if (interval === void 0) { interval = 2500; }
-            this.arrayLimit = arrayLimit;
-            this.interval = interval;
-        }
-        Object.defineProperty(ArrayShifter.prototype, "intervalLength", {
-            set: function (interval) {
-                this.interval = interval;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        Object.defineProperty(ArrayShifter.prototype, "arraySize", {
-            set: function (arrayLimit) {
-                this.arrayLimit = arrayLimit;
-            },
-            enumerable: true,
-            configurable: true
-        });
-        ArrayShifter.prototype.shift = function (array, buffer) {
-            var _this = this;
-            var arrayLength = array.length;
-            var bufferLength = buffer.length;
-            var newItems;
-            if (arrayLength === 0) {
-                var chunkSize = (bufferLength > this.arrayLimit) ? this.arrayLimit : bufferLength;
-                newItems = buffer.splice(0, chunkSize);
-                array.unshift.apply(array, newItems);
-            }
-            this.intervalReference = setInterval(function () {
-                if (bufferLength > 0) {
-                    newItems = buffer.splice(0, 1);
-                    array.unshift.apply(array, newItems);
-                    array.pop();
-                }
-                else {
-                    _this.reset();
-                }
-                arrayLength = array.length;
-                bufferLength = buffer.length;
-            }, this.interval);
-        };
-        ArrayShifter.prototype.reset = function () {
-            clearInterval(this.intervalReference);
-        };
-        return ArrayShifter;
-    }());
-    exports.ArrayShifter = ArrayShifter;
 });
 
 define('text!app.html', ['module'], function(module) { module.exports = "<template><require from=./styles/main.css></require><require from=./resources/elements/flickr-image.html></require><require from=./resources/elements/search-form.html></require><require from=./resources/elements/grid-view.html></require><h1>${title}</h1><search-form search.call=search() text.two-way=searchText>Go</search-form><grid-view><div class=col repeat.for=\"image of imagesToShow\"><flickr-image class=\"${ $last ? 'fade-out' : ''}\" link.bind=image.link linkbig.bind=image.linkBig title.bind=image.title></flickr-image></div></grid-view></template>"; });
