@@ -22,7 +22,6 @@ export class App {
     private flickrService: FlickrPublicSearchService,
     private arrayShifter: ArrayShifter
   ) {
-
     this.searchForm = new SearchForm(this.flickrService);
 
     // Needed for handling jsonp requests for public API
@@ -40,12 +39,12 @@ export class App {
     }
   }
 
+  private switchImages() {
+    this.arrayShifter.shift(this.imagesToShow, this.imageBuffer);
+  }
+
   private resetSearch() {
     this.searchText = '';
     this.imageBuffer, this.imagesToShow = [];
-  }
-
-  private switchImages() {
-    this.arrayShifter.shift(this.imagesToShow, this.imageBuffer);
   }
 }

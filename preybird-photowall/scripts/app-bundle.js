@@ -230,12 +230,12 @@ define('app',["require", "exports", "aurelia-framework", "./resources/utilities/
                 this.resetSearch();
             }
         };
+        App.prototype.switchImages = function () {
+            this.arrayShifter.shift(this.imagesToShow, this.imageBuffer);
+        };
         App.prototype.resetSearch = function () {
             this.searchText = '';
             this.imageBuffer, this.imagesToShow = [];
-        };
-        App.prototype.switchImages = function () {
-            this.arrayShifter.shift(this.imagesToShow, this.imageBuffer);
         };
         return App;
     }());
