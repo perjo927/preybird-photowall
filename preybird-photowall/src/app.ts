@@ -1,5 +1,6 @@
 import { autoinject } from 'aurelia-framework';
 
+import { ArrayShifter } from './resources/utilities/arrayShifter';
 import { FlickrWindow } from './resources/elements/flickr-window.interface';
 import { FlickrImage } from './resources/elements/flickr-image';
 import { FlickrPublicSearchService } from './resources/services/flickrPublicSearchService';
@@ -7,32 +8,43 @@ import { SearchForm } from './resources/elements/search-form';
 
 @autoinject
 export class App {
-  images: FlickrImage[] = [];
+  private imageBuffer = new Array<FlickrImage>();  
+  imagesToShow = new Array<FlickrImage>();
+
   searchForm: SearchForm;
-  searchText = ''; 
+  searchText = '';
+
   title = 'My Photo Wall';
   window = <FlickrWindow>window;
 
-  constructor(private flickrService: FlickrPublicSearchService) {
-    // TODO: setInterval(() => this.blabla(), 10000);
+
+  constructor(
+    private flickrService: FlickrPublicSearchService,
+    private arrayShifter: ArrayShifter
+  ) {
     this.searchForm = new SearchForm(this.flickrService);
 
-    // Handle jsonp requests for public API
+    // Needed for handling jsonp requests for public API
     this.window.jsonFlickrFeed = (data) => {
-      this.images = this.flickrService.handle(data)
+      this.imageBuffer = this.flickrService.handle(data)
+      this.switchImages();
     }
   }
 
-
   search() {
     if (this.searchText) {
+      this.arrayShifter.reset()
       this.searchForm.search(this.searchText);
-      this.reset();
-    }        
+      this.resetSearch();
+    }
   }
 
-  private reset() {
+  private switchImages() {
+    this.arrayShifter.shift(this.imagesToShow, this.imageBuffer);
+  }
+
+  private resetSearch() {
     this.searchText = '';
-    this.images = [];
+    this.imageBuffer, this.imagesToShow = [];
   }
 }

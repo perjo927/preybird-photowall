@@ -2,6 +2,7 @@
   <require from="./styles/main.css"></require>
   <require from="./resources/elements/flickr-image.html"></require>
   <require from="./resources/elements/search-form.html"></require>
+  <require from="./resources/elements/grid-view.html"></require>
 
   <h1>${title}</h1>
 
@@ -9,12 +10,14 @@
     Go
   </search-form>
 
-  <!-- TODO: Change picture -->
-  <div class="flex">
-    <div class="col" repeat.for="image of images">
-      <!-- TODO: render/append each element sequentially, add delay -->
-      <flickr-image link.bind="image.link" linkBig.bind="image.linkBig" title.bind="image.title">
+  <grid-view>
+    <div class="col" repeat.for="image of imagesToShow">
+      <flickr-image 
+        class="${ $last ? 'fade-out' : ''}"
+        link.bind="image.link" 
+        linkBig.bind="image.linkBig" 
+        title.bind="image.title">
       </flickr-image>
     </div>
-  </div>
+  </grid-view>
 </template>
