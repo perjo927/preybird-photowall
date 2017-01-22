@@ -1,9 +1,9 @@
 import { autoinject } from 'aurelia-framework';
 import { HttpClient } from 'aurelia-http-client';
 
-import { HttpClientConfig } from '../configuration/httpClientConfig';
 import { FlickrService } from './flickrService.interface';
 import { FlickrImage } from '../elements/flickr-image';
+import { HttpClientConfig } from '../configuration/httpClientConfig';
 
 @autoinject
 export class FlickrPublicSearchService implements FlickrService {

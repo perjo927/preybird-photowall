@@ -28,34 +28,30 @@ describe('Given that there is a search component', () => {
         search: (text: string) => ""
     };
     const searchModel = new SearchForm(searchService);
-    const search = () => { searchModel.search('foo') }
+    const search = () => { searchModel.search('foo') };
+    const buttonText = "Go";
 
     let component;
-
 
     beforeEach(() => {
         component = StageComponent
             .withResources('resources/elements/search-form')
-            .inView('<search-form search.call="search" text.two-way="text"></search-form>')
+            .inView(`<search-form search.call="search" text.two-way="text">${buttonText}</search-form>`)
             .boundTo({ search: search })
             .boundTo({ text: 'Per' });
     });
 
-
-
     describe('When the component is rendered', () => {
-        it('should have an input with text', done => {
+        it('Then it should have a button with projected text', done => {
             component.create(bootstrap).then(() => {
-                const inputElement = document.querySelector('input');
-                const
-                    console.log(inputElement.value, inputElement.search)
-                expect(inputElement.value).toBe('Per');
+                const element = document.querySelector('button');
+                expect(element.innerHTML).toMatch('Go');
                 done();
             }).catch(e => { console.log(e.toString()) });
         });
-        afterEach(() => {
-            component.dispose();
-        });
     });
-
+    
+    afterEach(() => {
+        component.dispose();
+    });
 });
