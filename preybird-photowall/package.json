@@ -1,7 +1,7 @@
 {
   "name": "preybird-photowall",
   "description": "An Aurelia client application.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "repository": {
     "type": "Aurelia",
     "url": "https://github.com/perjo927/preybird-photowall.git"
