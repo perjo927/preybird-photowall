@@ -27,6 +27,7 @@ _You can also use **[Yarn](https://yarnpkg.com)**_
 
 ## E2E
 _TODO_
+> gulp e2e
 
 ## Author
 **Per Jonsson**
