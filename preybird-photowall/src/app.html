@@ -12,9 +12,13 @@
 
   <!-- TODO: Change picture -->
   <grid-view>
-    <div class="col" repeat.for="image of images">
+    <div class="col" repeat.for="image of imagesToShow">
       <!-- TODO: render/append each element sequentially, add delay -->
-      <flickr-image link.bind="image.link" linkBig.bind="image.linkBig" title.bind="image.title">
+      <flickr-image 
+        class="${ $last ? 'fade-out' : ''}"
+        link.bind="image.link" 
+        linkBig.bind="image.linkBig" 
+        title.bind="image.title">
       </flickr-image>
     </div>
   </grid-view>

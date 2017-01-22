@@ -10,6 +10,10 @@ flickr-image {
     text-align: center;
 }
 
+.fade-out {
+    animation: fadeout cubic-bezier(0.895, 0.03, 0.685, 0.22) 2.8s;
+}
+
 picture {
     animation: fadein ease-in 1s;
 }
