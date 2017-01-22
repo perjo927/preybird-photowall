@@ -33,7 +33,7 @@ export class App {
 
   search() {
     if (this.searchText) {
-      this.arrayShifter.reset()
+      this.arrayShifter.reset();
       this.searchForm.search(this.searchText);
       this.resetSearch();
     }
