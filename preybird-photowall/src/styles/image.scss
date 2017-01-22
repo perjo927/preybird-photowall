@@ -10,13 +10,16 @@ flickr-image {
     text-align: center;
 }
 
+.fade-out {
+    animation: fadeout cubic-bezier(0.895, 0.03, 0.685, 0.22) 2.8s;
+}
+
 picture {
     animation: fadein ease-in 1s;
 }
 
 img {
-    height: $small-image;
-    width: $small-image;
+    max-height: $small-image;
     max-width: $small-image;
 
     border: 5px solid white;
@@ -30,16 +33,14 @@ h5 {
 
 @media screen and (min-width: $medium-size) {
     img {
-        height: $medium-image;
-        width: $medium-image;        
+        max-height: $medium-image;
         max-width: $medium-image;
     }
 }
 
 @media screen and (max-width: $small-size) {
     img {
-        height: $medium-image;
-        width: $medium-image;
+        max-height: $medium-image;
         max-width: $medium-image
     }
 }

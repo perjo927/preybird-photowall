@@ -175,36 +175,74 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-define('app',["require", "exports", "aurelia-framework", "./resources/services/flickrPublicSearchService", "./resources/elements/search-form"], function (require, exports, aurelia_framework_1, flickrPublicSearchService_1, search_form_1) {
+define('resources/elements/search-form',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
+    "use strict";
+    var SearchForm = (function () {
+        function SearchForm(searchService) {
+            var _this = this;
+            this.searchService = searchService;
+            this.search = function (text) {
+                if (text) {
+                    _this.searchService.search(text);
+                }
+            };
+        }
+        return SearchForm;
+    }());
+    SearchForm = __decorate([
+        aurelia_framework_1.autoinject,
+        __metadata("design:paramtypes", [Object])
+    ], SearchForm);
+    exports.SearchForm = SearchForm;
+});
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+define('app',["require", "exports", "aurelia-framework", "./resources/utilities/arrayShifter", "./resources/services/flickrPublicSearchService", "./resources/elements/search-form"], function (require, exports, aurelia_framework_1, arrayShifter_1, flickrPublicSearchService_1, search_form_1) {
     "use strict";
     var App = (function () {
-        function App(flickrService) {
+        function App(flickrService, arrayShifter) {
             var _this = this;
             this.flickrService = flickrService;
-            this.images = [];
+            this.arrayShifter = arrayShifter;
+            this.imageBuffer = new Array();
+            this.imagesToShow = new Array();
             this.searchText = '';
             this.title = 'My Photo Wall';
             this.window = window;
             this.searchForm = new search_form_1.SearchForm(this.flickrService);
             this.window.jsonFlickrFeed = function (data) {
-                _this.images = _this.flickrService.handle(data);
+                _this.imageBuffer = _this.flickrService.handle(data);
+                _this.switchImages();
             };
         }
         App.prototype.search = function () {
             if (this.searchText) {
+                this.arrayShifter.reset();
                 this.searchForm.search(this.searchText);
-                this.reset();
+                this.resetSearch();
             }
         };
-        App.prototype.reset = function () {
+        App.prototype.switchImages = function () {
+            this.arrayShifter.shift(this.imagesToShow, this.imageBuffer);
+        };
+        App.prototype.resetSearch = function () {
             this.searchText = '';
-            this.images = [];
+            this.imageBuffer, this.imagesToShow = [];
         };
         return App;
     }());
     App = __decorate([
         aurelia_framework_1.autoinject,
-        __metadata("design:paramtypes", [flickrPublicSearchService_1.FlickrPublicSearchService])
+        __metadata("design:paramtypes", [flickrPublicSearchService_1.FlickrPublicSearchService,
+            arrayShifter_1.ArrayShifter])
     ], App);
     exports.App = App;
 });
@@ -245,36 +283,6 @@ define('resources/index',["require", "exports"], function (require, exports) {
     function configure(config) {
     }
     exports.configure = configure;
-});
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-define('resources/elements/search-form',["require", "exports", "aurelia-framework"], function (require, exports, aurelia_framework_1) {
-    "use strict";
-    var SearchForm = (function () {
-        function SearchForm(searchService) {
-            var _this = this;
-            this.searchService = searchService;
-            this.search = function (text) {
-                if (text) {
-                    _this.searchService.search(text);
-                }
-            };
-        }
-        return SearchForm;
-    }());
-    SearchForm = __decorate([
-        aurelia_framework_1.autoinject,
-        __metadata("design:paramtypes", [Object])
-    ], SearchForm);
-    exports.SearchForm = SearchForm;
 });
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -419,9 +427,128 @@ define('resources/services/flickrPhotosSearchService',["require", "exports", "au
     exports.FlickrPhotosSearchService = FlickrPhotosSearchService;
 });
 
-define('text!app.html', ['module'], function(module) { module.exports = "<template><require from=./styles/main.css></require><require from=./resources/elements/flickr-image.html></require><require from=./resources/elements/search-form.html></require><h1>${title}</h1><search-form search.call=search() text.two-way=searchText>Go</search-form><div class=flex><div class=col repeat.for=\"image of images\"><flickr-image link.bind=image.link linkbig.bind=image.linkBig title.bind=image.title></flickr-image></div></div></template>"; });
+define('resources/services/listViewSwitcherService',["require", "exports"], function (require, exports) {
+    "use strict";
+    var ListViewSwitcher = (function () {
+        function ListViewSwitcher() {
+        }
+        ListViewSwitcher.prototype.handle = function () {
+            var _this = this;
+            if (imagesLength === 0) {
+                var chunkSize = (bufferLength > this.imagesLimit) ? this.imagesLimit : bufferLength;
+                newImages = this.imageBuffer.splice(0, chunkSize);
+                (_a = this.imagesToShow).unshift.apply(_a, newImages);
+            }
+            this.intervalReference = setInterval(function () {
+                if (bufferLength > 0) {
+                    newImages = _this.imageBuffer.splice(0, 1);
+                    (_a = _this.imagesToShow).unshift.apply(_a, newImages);
+                    _this.imagesToShow.pop();
+                }
+                else {
+                    _this.resetTimer();
+                }
+                imagesLength = _this.imagesToShow.length;
+                bufferLength = _this.imageBuffer.length;
+                var _a;
+            }, this.interval);
+            var _a;
+        };
+        return ListViewSwitcher;
+    }());
+    exports.ListViewSwitcher = ListViewSwitcher;
+});
+
+define('resources/utilities/listViewSwitcherService',["require", "exports"], function (require, exports) {
+    "use strict";
+    var ListViewSwitcher = (function () {
+        function ListViewSwitcher() {
+        }
+        ListViewSwitcher.prototype.handle = function () {
+            var _this = this;
+            if (imagesLength === 0) {
+                var chunkSize = (bufferLength > this.imagesLimit) ? this.imagesLimit : bufferLength;
+                newImages = this.imageBuffer.splice(0, chunkSize);
+                (_a = this.imagesToShow).unshift.apply(_a, newImages);
+            }
+            this.intervalReference = setInterval(function () {
+                if (bufferLength > 0) {
+                    newImages = _this.imageBuffer.splice(0, 1);
+                    (_a = _this.imagesToShow).unshift.apply(_a, newImages);
+                    _this.imagesToShow.pop();
+                }
+                else {
+                    _this.resetTimer();
+                }
+                imagesLength = _this.imagesToShow.length;
+                bufferLength = _this.imageBuffer.length;
+                var _a;
+            }, this.interval);
+            var _a;
+        };
+        return ListViewSwitcher;
+    }());
+    exports.ListViewSwitcher = ListViewSwitcher;
+});
+
+define('resources/utilities/arrayShifter',["require", "exports"], function (require, exports) {
+    "use strict";
+    var ArrayShifter = (function () {
+        function ArrayShifter(arrayLimit, interval) {
+            if (arrayLimit === void 0) { arrayLimit = 6; }
+            if (interval === void 0) { interval = 2500; }
+            this.arrayLimit = arrayLimit;
+            this.interval = interval;
+        }
+        Object.defineProperty(ArrayShifter.prototype, "intervalLength", {
+            set: function (interval) {
+                this.interval = interval;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        Object.defineProperty(ArrayShifter.prototype, "arraySize", {
+            set: function (arrayLimit) {
+                this.arrayLimit = arrayLimit;
+            },
+            enumerable: true,
+            configurable: true
+        });
+        ArrayShifter.prototype.shift = function (array, buffer) {
+            var _this = this;
+            var arrayLength = array.length;
+            var bufferLength = buffer.length;
+            var newItems;
+            if (arrayLength === 0) {
+                var chunkSize = (bufferLength > this.arrayLimit) ? this.arrayLimit : bufferLength;
+                newItems = buffer.splice(0, chunkSize);
+                array.unshift.apply(array, newItems);
+            }
+            this.intervalReference = setInterval(function () {
+                if (bufferLength > 0) {
+                    newItems = buffer.splice(0, 1);
+                    array.unshift.apply(array, newItems);
+                    array.pop();
+                }
+                else {
+                    _this.reset();
+                }
+                arrayLength = array.length;
+                bufferLength = buffer.length;
+            }, this.interval);
+        };
+        ArrayShifter.prototype.reset = function () {
+            clearInterval(this.intervalReference);
+        };
+        return ArrayShifter;
+    }());
+    exports.ArrayShifter = ArrayShifter;
+});
+
+define('text!app.html', ['module'], function(module) { module.exports = "<template><require from=./styles/main.css></require><require from=./resources/elements/flickr-image.html></require><require from=./resources/elements/search-form.html></require><require from=./resources/elements/grid-view.html></require><h1>${title}</h1><search-form search.call=search() text.two-way=searchText>Go</search-form><grid-view><div class=col repeat.for=\"image of imagesToShow\"><flickr-image class=\"${ $last ? 'fade-out' : ''}\" link.bind=image.link linkbig.bind=image.linkBig title.bind=image.title></flickr-image></div></grid-view></template>"; });
 define('text!resources/elements/flickr-image.html', ['module'], function(module) { module.exports = "<template bindable=\"link, linkBig, title\"><require from=../../styles/image.css></require><picture><source srcset=${linkBig} media=\"(min-width: 600px)\"><img src=${link} alt=${title}></picture><h5>${title}</h5></template>"; });
-define('text!styles/image.css', ['module'], function(module) { module.exports = "@keyframes fadein {\n  from {\n    opacity: 0; }\n  to {\n    opacity: 1; } }\n\n@keyframes shake {\n  10%, 90% {\n    transform: translate3d(-1px, 0, 0); }\n  20%, 80% {\n    transform: translate3d(2px, 0, 0); }\n  30%, 50%, 70% {\n    transform: translate3d(-4px, 0, 0); }\n  40%, 60% {\n    transform: translate3d(4px, 0, 0); } }\n\nflickr-image {\n  display: block;\n  text-align: center; }\n\npicture {\n  animation: fadein ease-in 1s; }\n\nimg {\n  height: 175px;\n  width: 175px;\n  max-width: 175px;\n  border: 5px solid white;\n  box-shadow: 0px 0px 2px black; }\n\nh5 {\n  margin-top: 0;\n  text-align: center; }\n\n@media screen and (min-width: 1000px) {\n  img {\n    height: 250px;\n    width: 250px;\n    max-width: 250px; } }\n\n@media screen and (max-width: 600px) {\n  img {\n    height: 250px;\n    width: 250px;\n    max-width: 250px; } }\n"; });
+define('text!styles/image.css', ['module'], function(module) { module.exports = "@keyframes fadein {\n  from {\n    opacity: 0; }\n  to {\n    opacity: 1; } }\n\n@keyframes fadeout {\n  from {\n    opacity: 1; }\n  to {\n    opacity: 0; } }\n\n@keyframes shake {\n  10%, 90% {\n    transform: translate3d(-1px, 0, 0); }\n  20%, 80% {\n    transform: translate3d(2px, 0, 0); }\n  30%, 50%, 70% {\n    transform: translate3d(-4px, 0, 0); }\n  40%, 60% {\n    transform: translate3d(4px, 0, 0); } }\n\nflickr-image {\n  display: block;\n  text-align: center; }\n\n.fade-out {\n  animation: fadeout cubic-bezier(0.895, 0.03, 0.685, 0.22) 2.8s; }\n\npicture {\n  animation: fadein ease-in 1s; }\n\nimg {\n  max-height: 175px;\n  max-width: 175px;\n  border: 5px solid white;\n  box-shadow: 0px 0px 2px black; }\n\nh5 {\n  margin-top: 0;\n  text-align: center; }\n\n@media screen and (min-width: 1000px) {\n  img {\n    max-height: 250px;\n    max-width: 250px; } }\n\n@media screen and (max-width: 600px) {\n  img {\n    max-height: 250px;\n    max-width: 250px; } }\n"; });
+define('text!resources/elements/grid-view.html', ['module'], function(module) { module.exports = "<template><div class=flex><slot></slot></div></template>"; });
 define('text!resources/elements/search-form.html', ['module'], function(module) { module.exports = "<template bindable=\"search, text\"><form submit.trigger=search() class=search><input type=text placeholder=Search value.two-way=text><button type=submit><slot></slot></button></form></template>"; });
-define('text!styles/main.css', ['module'], function(module) { module.exports = "@import url(\"https://fonts.googleapis.com/css?family=Open+Sans|Pacifico\");\n.flex {\n  display: flex;\n  flex-direction: row;\n  flex-flow: wrap;\n  justify-content: space-between;\n  align-items: baseline; }\n  .flex .col {\n    width: 32%;\n    padding: 20px; }\n\n@media screen and (max-width: 600px) {\n  .flex {\n    display: block; }\n    .flex .col {\n      width: 100%;\n      margin: 0 0 10px 0; } }\n\n@keyframes fadein {\n  from {\n    opacity: 0; }\n  to {\n    opacity: 1; } }\n\n@keyframes shake {\n  10%, 90% {\n    transform: translate3d(-1px, 0, 0); }\n  20%, 80% {\n    transform: translate3d(2px, 0, 0); }\n  30%, 50%, 70% {\n    transform: translate3d(-4px, 0, 0); }\n  40%, 60% {\n    transform: translate3d(4px, 0, 0); } }\n\n* {\n  box-sizing: border-box; }\n\nbody {\n  padding: 20px; }\n\nbody, input {\n  font-family: \"Open Sans\", sans-serif;\n  color: darkgray; }\n\nh1 {\n  animation: shake 1s;\n  font-family: \"Pacifico\", cursive;\n  color: mediumvioletred;\n  text-align: center; }\n\nform.search {\n  text-align: center; }\n  form.search input, form.search button {\n    border-radius: 3px; }\n  form.search input {\n    width: 150px;\n    border: 2px solid lightgray; }\n  form.search button {\n    margin-left: 5px;\n    border: 2px solid darkgray;\n    font-family: \"Open Sans\", sans-serif;\n    font-weight: bold;\n    width: 70px;\n    animation: shake 1s;\n    animation-delay: 1s; }\n"; });
+define('text!styles/main.css', ['module'], function(module) { module.exports = "@import url(\"https://fonts.googleapis.com/css?family=Open+Sans|Pacifico\");\n.flex {\n  display: flex;\n  flex-direction: row;\n  flex-flow: wrap;\n  justify-content: space-between;\n  align-items: baseline; }\n  .flex .col {\n    width: 32%;\n    padding: 20px; }\n\n@media screen and (max-width: 600px) {\n  .flex {\n    display: block; }\n    .flex .col {\n      width: 100%;\n      margin: 0 0 10px 0; } }\n\n@keyframes fadein {\n  from {\n    opacity: 0; }\n  to {\n    opacity: 1; } }\n\n@keyframes fadeout {\n  from {\n    opacity: 1; }\n  to {\n    opacity: 0; } }\n\n@keyframes shake {\n  10%, 90% {\n    transform: translate3d(-1px, 0, 0); }\n  20%, 80% {\n    transform: translate3d(2px, 0, 0); }\n  30%, 50%, 70% {\n    transform: translate3d(-4px, 0, 0); }\n  40%, 60% {\n    transform: translate3d(4px, 0, 0); } }\n\n* {\n  box-sizing: border-box; }\n\nbody {\n  padding: 20px; }\n\nbody, input {\n  font-family: \"Open Sans\", sans-serif;\n  color: darkgray; }\n\nh1 {\n  animation: shake 1s;\n  font-family: \"Pacifico\", cursive;\n  color: mediumvioletred;\n  text-align: center; }\n\nform.search {\n  text-align: center; }\n  form.search input, form.search button {\n    border-radius: 3px; }\n  form.search input {\n    width: 150px;\n    border: 2px solid lightgray; }\n  form.search button {\n    margin-left: 5px;\n    border: 2px solid darkgray;\n    font-family: \"Open Sans\", sans-serif;\n    font-weight: bold;\n    width: 70px;\n    animation: shake 1s;\n    animation-delay: 1s; }\n"; });
 //# sourceMappingURL=app-bundle.js.map
